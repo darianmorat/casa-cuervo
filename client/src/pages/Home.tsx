@@ -53,10 +53,10 @@ export const Home: React.FC = () => {
    };
 
    return (
-      <div className="relative min-h-screen bg-background relative overflow-hidden">
+      <div className="relative min-h-screen bg-background relative overflow-visible md:overflow-hidden flex items-center">
          <RandomBlobs />
 
-         <div className="z-10 h-screen flex items-center justify-center p-4">
+         <div className="z-10 flex items-center justify-center p-4 flex-1">
             <Container size="large">
                <div className="text-center mb-14">
                   <h1 className="text-5xl font-thin tracking-wider uppercase">
@@ -65,7 +65,7 @@ export const Home: React.FC = () => {
                   <div className="w-24 h-[1.5px] bg-gradient-to-r from-transparent via-foreground/30 to-transparent mx-auto mt-4" />
                </div>
 
-               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 h-96">
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 h-190 md:h-96">
                   {buttons.map((button) => (
                      <button
                         key={button.id}
@@ -73,7 +73,7 @@ export const Home: React.FC = () => {
                            group relative overflow-hidden
                            bg-black/2 dark:bg-card/50 backdrop-blur-sm
                            border transition-all duration-500 ease-out
-                           hover:scale-105 rounded-2xl p-8
+                           hover:scale-105 p-8
                            shadow-xl shadow-background/50
                            ${
                               hoveredButton === button.id
@@ -93,16 +93,16 @@ export const Home: React.FC = () => {
                          `}
                         />
 
-                        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                            <div
-                              className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${button.gradient} blur-sm`}
+                              className={`absolute inset-0 bg-gradient-to-r ${button.gradient} blur-sm`}
                            />
                         </div>
 
                         <div className="relative z-10 h-full flex flex-col items-center justify-center">
                            <div
                               className={`
-                                w-16 h-16 mb-6 rounded-xl
+                                w-16 h-16 mb-6
                                 bg-gradient-to-br ${button.gradient}
                                 border border-border/50
                                 flex items-center justify-center
