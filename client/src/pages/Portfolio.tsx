@@ -4,6 +4,10 @@ import { useState } from "react";
 export const Portfolio = () => {
    const [activeSection, setActiveSection] = useState("gallery");
 
+   const phone = 3176980920;
+   const message = "Hola, me gustaría saber mas acerca de tus obras!";
+   const url = `https://wa.me/57${phone}?text=${encodeURIComponent(message)}`;
+
    const galleryImages = [
       {
          id: 1,
@@ -289,7 +293,7 @@ export const Portfolio = () => {
 
          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {artworks.map((artwork) => (
-               <div key={artwork.id} className="group cursor-pointer">
+               <div key={artwork.id} className="relative group cursor-pointer">
                   <div className="relative overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500">
                      <img
                         src={`https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=600&h=800&fit=crop&sig=${artwork.id}`}
@@ -306,34 +310,39 @@ export const Portfolio = () => {
                      </div>
                   </div>
 
-                  <div className="space-y-3 p-4 bg-gradient-to-b from-muted/30 to-muted/10 lg border-x border-b border-foreground/10">
-                     <h3 className="text-base tracking-wide font-medium">
-                        {artwork.title}
-                     </h3>
-                     <div className="flex justify-between items-center text-xs text-muted-foreground">
-                        <span>
-                           {artwork.size} • {artwork.year}
-                        </span>
-                        <span
-                           className={`px-2 py-1 text-xs font-medium ${
-                              artwork.available
-                                 ? "text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30"
-                                 : "text-red-500 bg-red-100 dark:bg-red-900/30"
-                           }`}
-                        >
-                           {artwork.available ? "DISPONIBLE" : "VENDIDA"}
-                        </span>
-                     </div>
-                     <div className="flex justify-between items-center pt-2 border-t border-foreground/10">
-                        <span className="text-lg font-semibold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                           {artwork.price}
-                        </span>
-                        {artwork.available && (
-                           <button className="text-xs tracking-widest hover:text-blue-400 transition-all duration-300 border border-foreground/20 hover:border-blue-400/60 px-4 py-2 hover:shadow-md hover:shadow-blue-400/20 hover:bg-blue-400/5">
+                  <span
+                     className={`absolute top-0 right-0 m-2 px-2 py-1 text-xs font-medium ${
+                        artwork.available
+                           ? "text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30"
+                           : "text-red-500 bg-red-100 dark:bg-red-900/30"
+                     }`}
+                  >
+                     {artwork.available ? "DISPONIBLE" : "ENTREGADA"}
+                  </span>
+
+                  <div className="space-y-3 p-4 bg-gradient-to-b from-muted/90 to-muted/10 border-x border-b border-foreground/10">
+                     {artwork.available ? (
+                        <div className="flex justify-between items-center">
+                           <span className="text-lg font-semibold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                              {artwork.price}
+                           </span>
+                           <button
+                              onClick={() => window.open(url, "_blank")}
+                              className="text-xs tracking-widest hover:text-blue-400 transition-all duration-300 border border-foreground/20 hover:border-blue-400/60 px-4 py-2 hover:shadow-md hover:shadow-blue-400/20 hover:bg-blue-400/5"
+                           >
                               CONSULTAR
                            </button>
-                        )}
-                     </div>
+                        </div>
+                     ) : (
+                        <div className="flex justify-center items-center">
+                           <button
+                              disabled={true}
+                              className="text-xs tracking-widest border border-foreground/20 px-4 py-2 cursor-not-allowed text-black/50"
+                           >
+                              NO DISPONIBLE
+                           </button>
+                        </div>
+                     )}
                   </div>
                </div>
             ))}
