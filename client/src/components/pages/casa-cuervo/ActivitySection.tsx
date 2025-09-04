@@ -58,7 +58,7 @@ export const ActivitySection = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                {activities.map((activity) => (
                   <div key={activity.id} className="group">
-                     <div className="bg-card border border-border hover:border-muted-foreground/20 transition-all duration-300 hover:shadow-lg">
+                     <div className="bg-card border border-border hover:border-muted-foreground/20 transition-all duration-300 hover:shadow-lg h-full flex flex-col">
                         <div className="relative overflow-hidden">
                            <img
                               src={activity.img}
@@ -70,7 +70,7 @@ export const ActivitySection = () => {
                            </div>
                         </div>
 
-                        <div className="p-6 space-y-4">
+                        <div className="p-6 space-y-4 flex-1 flex flex-col">
                            <h3 className="text-xl font-medium text-foreground">
                               {activity.title}
                            </h3>
@@ -86,7 +86,7 @@ export const ActivitySection = () => {
                               </div>
                            </div>
 
-                           <p className="text-muted-foreground leading-relaxed text-sm">
+                           <p className="text-muted-foreground leading-relaxed text-sm h-full">
                               {activity.description}
                            </p>
 
