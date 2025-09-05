@@ -4,6 +4,7 @@ import { Home } from "./pages/Home";
 import { Video } from "./pages/Video";
 import { CasaCuervo } from "./pages/CasaCuervo";
 import { Portfolio } from "./pages/Portfolio";
+import { Secret } from "./pages/Secret";
 
 function App() {
    return (
@@ -14,6 +15,7 @@ function App() {
                <Route path="/video" element={<Video />} />
                <Route path="/casa-cuervo" element={<CasaCuervo />} />
                <Route path="/portfolio" element={<Portfolio />} />
+               <Route path="/secret" element={<Secret />} />
             </Route>
          </Routes>
       </>
