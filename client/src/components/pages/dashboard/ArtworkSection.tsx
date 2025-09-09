@@ -5,7 +5,14 @@ import { useForm } from "react-hook-form";
 import { useArtworkStore } from "@/stores/useArtworkStore";
 import { Plus, Calendar, DollarSign, Ruler, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { CreateArtwork } from "./artwork/CreateArtWork";
+import { CreateArtwork } from "./artwork/CreateArtwork";
+import { DeleteArtwork } from "./artwork/DeleteArtwork";
+
+type ShowFormState = {
+   open: boolean;
+   for: string;
+   value?: string;
+};
 
 const artworkSchema = z.object({
    title: z.string().min(1, { message: "Título es requerido" }),
@@ -14,9 +21,10 @@ const artworkSchema = z.object({
    year: z.string().min(1, { message: "Año es requerido" }),
    image: z.url({ message: "URL de imagen inválida" }),
 });
+
 export const ArtworkSection = () => {
-   const [showForm, setShowForm] = useState(false);
-   const { artworks, getArtworks, createArtwork, deleteArtwork } = useArtworkStore();
+   const [showForm, setShowForm] = useState<ShowFormState>({ open: false, for: "" });
+   const { artworks, getArtworks, createArtwork } = useArtworkStore();
 
    useEffect(() => {
       getArtworks();
@@ -39,12 +47,12 @@ export const ArtworkSection = () => {
       closeForm();
    };
 
-   const openForm = () => {
-      setShowForm(true);
+   const openForm = (formType: string, value?: string) => {
+      setShowForm({ open: true, for: formType, value: value });
    };
 
    const closeForm = () => {
-      setShowForm(false);
+      setShowForm({ open: true, for: "" });
       artworkForm.reset();
    };
 
@@ -55,7 +63,7 @@ export const ArtworkSection = () => {
                <h2 className="text-2xl font-bold">Obras</h2>
                <p className="text-muted-foreground mt-1">Gestiona el catálogo de obras</p>
             </div>
-            <Button onClick={() => openForm()} className="m-auto sm:m-0">
+            <Button onClick={() => openForm("create")} className="m-auto sm:m-0">
                <Plus /> Nueva Obra
             </Button>
          </div>
@@ -71,7 +79,7 @@ export const ArtworkSection = () => {
                   >
                      <X
                         className="absolute top-0 right-0 w-8 h-8 bg-red-400 text-white p-1 hover:bg-red-500 hover:cursor-pointer opacity-0 group-hover:opacity-100 transition"
-                        onClick={() => deleteArtwork(artwork.id)}
+                        onClick={() => openForm("delete", artwork.id)}
                      />
 
                      <div className="aspect-square bg-muted">
@@ -106,12 +114,16 @@ export const ArtworkSection = () => {
             </div>
          )}
 
-         {showForm && (
+         {showForm.for === "create" && (
             <CreateArtwork
                artworkForm={artworkForm}
                handleCreateArtwork={handleCreateArtwork}
                closeForm={closeForm}
             />
+         )}
+
+         {showForm.for === "delete" && showForm.value && (
+            <DeleteArtwork artworkId={showForm.value} closeForm={closeForm} />
          )}
       </div>
    );

@@ -6,6 +6,13 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { CreateActivity } from "./activity/CreateActivity";
+import { DeleteActivity } from "./activity/DeleteActivity";
+
+type ShowFormState = {
+   open: boolean;
+   for: string;
+   value?: string;
+};
 
 const activitySchema = z.object({
    title: z.string().min(1, { message: "Título es requerido" }),
@@ -19,9 +26,8 @@ const activitySchema = z.object({
 });
 
 export const ActivitySection = () => {
-   const [showForm, setShowForm] = useState(false);
-   const { activities, getActivities, createActivity, deleteActivity } =
-      useActivityStore();
+   const [showForm, setShowForm] = useState<ShowFormState>({ open: false, for: "" });
+   const { activities, getActivities, createActivity } = useActivityStore();
 
    useEffect(() => {
       getActivities();
@@ -45,12 +51,12 @@ export const ActivitySection = () => {
       closeForm();
    };
 
-   const openForm = () => {
-      setShowForm(true);
+   const openForm = (formType: string, value?: string) => {
+      setShowForm({ open: true, for: formType, value: value });
    };
 
    const closeForm = () => {
-      setShowForm(false);
+      setShowForm({ open: false, for: "" });
       activityForm.reset();
    };
 
@@ -63,7 +69,7 @@ export const ActivitySection = () => {
                   Gestiona las actividades de Casa Cuervo
                </p>
             </div>
-            <Button onClick={() => openForm()} className="m-auto sm:m-0">
+            <Button onClick={() => openForm("create")} className="m-auto sm:m-0">
                <Plus /> Nueva Actividad
             </Button>
          </div>
@@ -79,7 +85,7 @@ export const ActivitySection = () => {
                   >
                      <X
                         className="absolute top-0 right-0 w-8 h-8 bg-red-400 text-white p-1 hover:bg-red-500 hover:cursor-pointer opacity-0 group-hover:opacity-100 transition"
-                        onClick={() => deleteActivity(activity.id)}
+                        onClick={() => openForm("delete", activity.id)}
                      />
                      <div className="aspect-video bg-muted">
                         <img
@@ -116,12 +122,16 @@ export const ActivitySection = () => {
             </div>
          )}
 
-         {showForm && (
+         {showForm.for === "create" && (
             <CreateActivity
                activityForm={activityForm}
                handleCreateActivity={handleCreateActivity}
                closeForm={closeForm}
             />
+         )}
+
+         {showForm.for === "delete" && showForm.value && (
+            <DeleteActivity activityId={showForm.value} closeForm={closeForm} />
          )}
       </div>
    );
