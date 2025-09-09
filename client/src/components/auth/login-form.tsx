@@ -11,7 +11,7 @@ import {
    FormItem,
    FormLabel,
    FormMessage,
-} from "./ui/form";
+} from "../ui/form";
 import { EyeIcon, EyeOffIcon, Lock, User } from "lucide-react";
 import { useState } from "react";
 import {
@@ -21,6 +21,7 @@ import {
    CardHeader,
    CardTitle,
 } from "@/components/ui/card";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const formSchema = z.object({
    email: z.email({ message: "Email invalido" }),
@@ -29,6 +30,7 @@ const formSchema = z.object({
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"form">) {
    const [showPassword, setShowPassword] = useState(false);
+   const { authenticate } = useAuthStore();
 
    const form = useForm({
       resolver: zodResolver(formSchema),
@@ -39,8 +41,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
    });
 
    const onSubmit = (values: z.infer<typeof formSchema>) => {
-      // authenticate(values.email, values.password);
-      console.log(values);
+      authenticate(values.email, values.password);
    };
 
    const toggleShowPassword = () => {

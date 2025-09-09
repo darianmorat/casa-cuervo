@@ -122,7 +122,7 @@
       cursor: pointer;
    }
 
-   /* Scrollbar design */
+   /* Scrollbar */
    ::-webkit-scrollbar {
       width: 8px;
       height: 8px;
@@ -136,5 +136,12 @@
    }
    ::-webkit-scrollbar-thumb:hover {
       background: #999999;
+   }
+
+   /* Toastify */
+   .Toastify__toast-container,
+   .Toastify__toast,
+   .Toastify__progress-bar--wrp {
+      border-radius: 0px !important;
    }
 }
