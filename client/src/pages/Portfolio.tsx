@@ -337,7 +337,7 @@ export const Portfolio = () => {
                         <div className="flex justify-center items-center">
                            <button
                               disabled={true}
-                              className="text-xs tracking-widest border border-foreground/20 px-4 py-2 cursor-not-allowed text-black/50"
+                              className="text-xs tracking-widest border border-foreground/20 px-4 py-2 cursor-not-allowed text-black/50 dark:text-white/50"
                            >
                               NO DISPONIBLE
                            </button>
