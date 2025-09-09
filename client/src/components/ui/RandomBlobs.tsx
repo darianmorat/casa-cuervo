@@ -3,14 +3,14 @@ import { useMemo } from "react";
 function RandomBlobs() {
    const blobs = useMemo(() => {
       const colors = [
-         "bg-blue-500/20 dark:bg-blue-500/20",
-         "bg-purple-500/20 dark:bg-purple-500/20",
-         "bg-emerald-500/20 dark:bg-emerald-500/20",
-         "bg-cyan-500/20 dark:bg-cyan-500/20",
-         "bg-pink-500/20 dark:bg-pink-500/20",
-         "bg-yellow-500/20 dark:bg-yellow-500/20",
-         "bg-indigo-500/20 dark:bg-indigo-500/20",
-         "bg-teal-500/20 dark:bg-teal-500/20",
+         "bg-blue-500/20 dark:bg-blue-500/40",
+         "bg-purple-500/40 dark:bg-purple-500/40",
+         "bg-emerald-500/40 dark:bg-emerald-500/40",
+         "bg-cyan-500/40 dark:bg-cyan-500/40",
+         "bg-pink-500/40 dark:bg-pink-500/40",
+         "bg-yellow-500/40 dark:bg-yellow-500/40",
+         "bg-indigo-500/40 dark:bg-indigo-500/40",
+         "bg-teal-500/40 dark:bg-teal-500/40",
       ];
 
       const minDistance = 20; // minimum distance in percentage units
