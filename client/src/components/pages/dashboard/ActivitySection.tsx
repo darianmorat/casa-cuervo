@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useActivityStore } from "@/stores/useActivityStore";
-import { X, Plus, MapPin, Calendar, Clock, Ticket, PencilLine } from "lucide-react";
+import { X, Plus, Calendar, Clock, Ticket, PencilLine } from "lucide-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
