@@ -7,34 +7,51 @@ import {
    FormLabel,
    FormMessage,
 } from "@/components/ui/form";
-import type { UseFormReturn } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useForm, type UseFormReturn } from "react-hook-form";
+import { X, Save } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
-import { Save, X } from "lucide-react";
+import { activitySchema } from "./ActivitySchema";
 
-type ArtworkFormData = {
+type ActivityFormData = {
    title: string;
-   price: string;
-   size: string;
-   year: string;
+   date: string;
+   time: string;
    image: string;
+   description: string;
+   spots: string;
 };
 
-interface CreateArtworkProps {
-   artworkForm: UseFormReturn<ArtworkFormData>;
-   handleCreateArtwork: (data: ArtworkFormData) => void;
+interface CreateActivityProps {
+   activity: ActivityFormData;
+   activityForm: UseFormReturn<ActivityFormData>;
+   handleEditActivity: (data: ActivityFormData) => void;
    closeForm: () => void;
 }
 
-export const CreateArtwork = ({
-   artworkForm,
-   handleCreateArtwork,
+export const EditActivity = ({
+   activity,
+   handleEditActivity,
    closeForm,
-}: CreateArtworkProps) => {
+}: CreateActivityProps) => {
+   const activityForm = useForm({
+      resolver: zodResolver(activitySchema),
+      defaultValues: {
+         title: activity.title,
+         date: activity.date,
+         time: activity.time,
+         image: activity.image,
+         description: activity.description,
+         spots: activity.spots,
+      },
+   });
+
    return (
       <Modal onClose={closeForm} orientation="right">
          <div className="relative bg-background dark:bg-card p-6 w-full max-w-lg">
-            <h3 className="text-lg font-semibold mb-4">Nueva obra</h3>
+            <h3 className="text-lg font-semibold mb-4">Editar actividad</h3>
 
             <Button
                type="button"
@@ -45,19 +62,19 @@ export const CreateArtwork = ({
                <X className="w-6 h-6" />
             </Button>
 
-            <Form {...artworkForm}>
+            <Form {...activityForm}>
                <form
-                  onSubmit={artworkForm.handleSubmit(handleCreateArtwork)}
+                  onSubmit={activityForm.handleSubmit(handleEditActivity)}
                   className="space-y-4"
                >
                   <FormField
-                     control={artworkForm.control}
+                     control={activityForm.control}
                      name="title"
                      render={({ field }) => (
                         <FormItem>
                            <FormLabel>Título</FormLabel>
                            <FormControl>
-                              <Input {...field} placeholder="Nombre de la obra" />
+                              <Input {...field} placeholder="Nombre de la actividad" />
                            </FormControl>
                            <FormMessage />
                         </FormItem>
@@ -66,13 +83,17 @@ export const CreateArtwork = ({
 
                   <div className="grid grid-cols-2 gap-4">
                      <FormField
-                        control={artworkForm.control}
-                        name="price"
+                        control={activityForm.control}
+                        name="date"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel>Precio</FormLabel>
+                              <FormLabel>Fecha</FormLabel>
                               <FormControl>
-                                 <Input {...field} placeholder="$2,400" />
+                                 <Input
+                                    {...field}
+                                    type="date"
+                                    className="text-black/60"
+                                 />
                               </FormControl>
                               <FormMessage />
                            </FormItem>
@@ -80,13 +101,13 @@ export const CreateArtwork = ({
                      />
 
                      <FormField
-                        control={artworkForm.control}
-                        name="size"
+                        control={activityForm.control}
+                        name="time"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel>Tamaño</FormLabel>
+                              <FormLabel>Hora</FormLabel>
                               <FormControl>
-                                 <Input {...field} placeholder="60x80cm" />
+                                 <Input {...field} placeholder="14:00 - 17:00" />
                               </FormControl>
                               <FormMessage />
                            </FormItem>
@@ -95,13 +116,13 @@ export const CreateArtwork = ({
                   </div>
 
                   <FormField
-                     control={artworkForm.control}
-                     name="year"
+                     control={activityForm.control}
+                     name="image"
                      render={({ field }) => (
                         <FormItem>
-                           <FormLabel>Año</FormLabel>
+                           <FormLabel>URL de Imagen</FormLabel>
                            <FormControl>
-                              <Input {...field} placeholder="2024" />
+                              <Input {...field} placeholder="https://..." type="url" />
                            </FormControl>
                            <FormMessage />
                         </FormItem>
@@ -109,13 +130,31 @@ export const CreateArtwork = ({
                   />
 
                   <FormField
-                     control={artworkForm.control}
-                     name="image"
+                     control={activityForm.control}
+                     name="description"
                      render={({ field }) => (
                         <FormItem>
-                           <FormLabel>URL de Imagen</FormLabel>
+                           <FormLabel>Descripción</FormLabel>
                            <FormControl>
-                              <Input {...field} placeholder="https://..." type="url" />
+                              <Textarea
+                                 {...field}
+                                 rows={4}
+                                 placeholder="Descripción detallada de la actividad..."
+                              />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+
+                  <FormField
+                     control={activityForm.control}
+                     name="spots"
+                     render={({ field }) => (
+                        <FormItem>
+                           <FormLabel>Cupos</FormLabel>
+                           <FormControl>
+                              <Input {...field} placeholder="8 cupos disponibles" />
                            </FormControl>
                            <FormMessage />
                         </FormItem>

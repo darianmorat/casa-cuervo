@@ -3,28 +3,31 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useArtworkStore } from "@/stores/useArtworkStore";
-import { Plus, Calendar, DollarSign, Ruler, X } from "lucide-react";
+import { Plus, Calendar, DollarSign, Ruler, X, PencilLine } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CreateArtwork } from "./artwork/CreateArtwork";
 import { DeleteArtwork } from "./artwork/DeleteArtwork";
+import { EditArtwork } from "./artwork/EditArtwork";
+import { artworkSchema } from "./artwork/ArtworkSchema";
+
+type ArtworkFormData = {
+   title: string;
+   price: string;
+   size: string;
+   year: string;
+   image: string;
+};
 
 type ShowFormState = {
    open: boolean;
    for: string;
-   value?: string;
+   id?: string;
+   object?: ArtworkFormData;
 };
-
-const artworkSchema = z.object({
-   title: z.string().min(1, { message: "Título es requerido" }),
-   price: z.string().min(1, { message: "Precio es requerido" }),
-   size: z.string().min(1, { message: "Tamaño es requerido" }),
-   year: z.string().min(1, { message: "Año es requerido" }),
-   image: z.url({ message: "URL de imagen inválida" }),
-});
 
 export const ArtworkSection = () => {
    const [showForm, setShowForm] = useState<ShowFormState>({ open: false, for: "" });
-   const { artworks, getArtworks, createArtwork } = useArtworkStore();
+   const { artworks, getArtworks, createArtwork, editArtwork } = useArtworkStore();
 
    useEffect(() => {
       getArtworks();
@@ -47,8 +50,15 @@ export const ArtworkSection = () => {
       closeForm();
    };
 
-   const openForm = (formType: string, value?: string) => {
-      setShowForm({ open: true, for: formType, value: value });
+   const handleEditArtwork = (data: z.infer<typeof artworkSchema>) => {
+      if (!showForm.id) return;
+
+      editArtwork(data, showForm.id);
+      closeForm();
+   };
+
+   const openForm = (formType: string, id?: string, object?: ArtworkFormData) => {
+      setShowForm({ open: true, for: formType, id, object });
    };
 
    const closeForm = () => {
@@ -89,7 +99,7 @@ export const ArtworkSection = () => {
                            className="w-full h-full object-cover"
                         />
                      </div>
-                     <div className="p-5">
+                     <div className="p-6 space-y-4 flex-1 flex flex-col">
                         <h3 className="font-semibold mb-3">{artwork.title}</h3>
                         <div className="space-y-2">
                            <div className="flex items-center text-muted-foreground text-sm">
@@ -105,8 +115,8 @@ export const ArtworkSection = () => {
                               {artwork.year}
                            </div>
                         </div>
-                        <Button variant={"outline"} className="mt-5">
-                           Editar obra
+                        <Button onClick={() => openForm("edit", artwork.id, artwork)}>
+                           <PencilLine /> Editar
                         </Button>
                      </div>
                   </div>
@@ -122,8 +132,17 @@ export const ArtworkSection = () => {
             />
          )}
 
-         {showForm.for === "delete" && showForm.value && (
-            <DeleteArtwork artworkId={showForm.value} closeForm={closeForm} />
+         {showForm.for === "edit" && showForm.object && (
+            <EditArtwork
+               artwork={showForm.object}
+               artworkForm={artworkForm}
+               handleEditArtwork={handleEditArtwork}
+               closeForm={closeForm}
+            />
+         )}
+
+         {showForm.for === "delete" && showForm.id && (
+            <DeleteArtwork artworkId={showForm.id} closeForm={closeForm} />
          )}
       </div>
    );

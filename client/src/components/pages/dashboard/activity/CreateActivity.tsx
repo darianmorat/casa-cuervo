@@ -36,7 +36,7 @@ export const CreateActivity = ({
    return (
       <Modal onClose={closeForm} orientation="right">
          <div className="relative bg-background dark:bg-card p-6 w-full max-w-lg">
-            <h3 className="text-lg font-semibold mb-4">Nueva Actividad</h3>
+            <h3 className="text-lg font-semibold mb-4">Nueva actividad</h3>
 
             <Button
                type="button"

@@ -1,8 +1,11 @@
 import { Container } from "@/components/layout/Container";
-import { useState } from "react";
+import { useArtworkStore } from "@/stores/useArtworkStore";
+import { Fullscreen } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export const Portfolio = () => {
    const [activeSection, setActiveSection] = useState("gallery");
+   const { artworks, getArtworks } = useArtworkStore();
 
    const phone = 3176980920;
    const message = "Hola, me gustaría saber mas acerca de tus obras!";
@@ -11,76 +14,30 @@ export const Portfolio = () => {
    const galleryImages = [
       {
          id: 1,
-         src: "https://img3.wallspic.com/previews/3/9/8/5/7/175893/175893-anime-anime_art-cloud-world-building-x750.jpg",
+         src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468920/473368825_18474682114024094_7048284083203549906_n._siycn6.jpg",
          alt: "Pintura 1",
       },
       {
          id: 2,
-         src: "https://img3.wallspic.com/previews/3/9/8/5/7/175893/175893-anime-anime_art-cloud-world-building-x750.jpg",
+         src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468919/458383962_18449743495024094_3853524860249220110_n._gc6dyt.jpg",
          alt: "Pintura 2",
       },
       {
          id: 3,
-         src: "https://img3.wallspic.com/previews/3/9/8/5/7/175893/175893-anime-anime_art-cloud-world-building-x750.jpg",
+         src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468919/448275728_18434292652024094_4885150987941140735_n._ni3cin.jpg",
          alt: "Pintura 3",
       },
       {
          id: 4,
-         src: "https://img3.wallspic.com/previews/3/9/8/5/7/175893/175893-anime-anime_art-cloud-world-building-x750.jpg",
+         src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468919/448272816_18434292718024094_2129371369259876850_n._cbyhop.jpg",
          alt: "Pintura 4",
       },
    ];
 
-   const artworks = [
-      {
-         id: 1,
-         title: "Sueños de Medianoche",
-         price: "$2,400",
-         size: "60x80cm",
-         year: "2024",
-         available: true,
-      },
-      {
-         id: 2,
-         title: "Reflejos del Alma",
-         price: "$1,800",
-         size: "50x70cm",
-         year: "2024",
-         available: true,
-      },
-      {
-         id: 3,
-         title: "Caminos Perdidos",
-         price: "$3,200",
-         size: "80x100cm",
-         year: "2023",
-         available: false,
-      },
-      {
-         id: 4,
-         title: "Luz Interior",
-         price: "$2,000",
-         size: "55x75cm",
-         year: "2024",
-         available: true,
-      },
-      {
-         id: 5,
-         title: "Memorias Fragmentadas",
-         price: "$2,800",
-         size: "65x85cm",
-         year: "2024",
-         available: true,
-      },
-      {
-         id: 6,
-         title: "Horizontes Infinitos",
-         price: "$4,000",
-         size: "90x120cm",
-         year: "2023",
-         available: true,
-      },
-   ];
+   useEffect(() => {
+      getArtworks();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, []);
 
    const renderGallery = () => (
       <>
@@ -95,6 +52,11 @@ export const Portfolio = () => {
                         src={image.src}
                         alt={image.alt}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                     />
+                     <Fullscreen
+                        size={35}
+                        onClick={() => window.open(image.src, "_blank")}
+                        className="absolute z-10 bottom-4 right-4 bg-black/30 hover:bg-black/40 p-1 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
                      />
                   </div>
                </div>
@@ -127,7 +89,7 @@ export const Portfolio = () => {
 
          <div className="text-center mb-20">
             <h1 className="text-5xl md:text-6xl font-thin tracking-widest mb-6 bg-gradient-to-r from-foreground via-blue-400 to-foreground bg-clip-text text-transparent">
-               MARÍA CUERVO
+               LAURA GÓMEZ ESTRADA
             </h1>
             <div className="w-32 h-[2px] bg-gradient-to-r from-transparent via-blue-400/60 via-purple-400/60 to-transparent mx-auto mb-6" />
             <p className="text-sm tracking-[0.4em] text-muted-foreground/80 font-light">
@@ -199,15 +161,27 @@ export const Portfolio = () => {
                </div>
             </div>
 
-            <div className="pt-12 flex justify-center gap-8">
+            <div className="pt-12 flex justify-center gap-8 flex-col sm:flex-row">
                <a
-                  href="#"
+                  href="https://linktr.ee/La_cuervo"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs tracking-widest hover:text-blue-400 transition-all duration-300 border border-foreground/20 hover:border-blue-400/60 px-6 py-3 hover:shadow-lg hover:shadow-blue-400/20"
+               >
+                  LINKTR
+               </a>
+               <a
+                  href="https://www.instagram.com/la_cuervog"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-xs tracking-widest hover:text-blue-400 transition-all duration-300 border border-foreground/20 hover:border-blue-400/60 px-6 py-3 hover:shadow-lg hover:shadow-blue-400/20"
                >
                   INSTAGRAM
                </a>
                <a
-                  href="#"
+                  href="https://www.youtube.com/@lauragomezestrada8896"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-xs tracking-widest hover:text-blue-400 transition-all duration-300 border border-foreground/20 hover:border-blue-400/60 px-6 py-3 hover:shadow-lg hover:shadow-blue-400/20"
                >
                   YOUTUBE
@@ -241,10 +215,10 @@ export const Portfolio = () => {
                </p>
 
                <a
-                  href="mailto:maria@casacuervo.com"
+                  href="mailto:v.cuervo1683@gmail.com"
                   className="inline-block text-xl tracking-wide hover:text-blue-400 transition-all duration-300 border-b-2 border-foreground/30 hover:border-blue-400/80 pb-2 px-4 py-2 hover:bg-blue-400/5"
                >
-                  maria@casacuervo.com
+                  v.cuervo1683@gmail.com
                </a>
             </div>
 
@@ -253,12 +227,12 @@ export const Portfolio = () => {
                   <h4 className="text-xs tracking-widest mb-2 text-blue-400">
                      UBICACIÓN
                   </h4>
-                  <p className="text-sm text-muted-foreground">Bogotá, Colombia</p>
+                  <p className="text-sm text-muted-foreground">Neiva, Colombia</p>
                </div>
                <div className="p-6 bg-muted/20 border border-foreground/10 hover:border-blue-400/30 transition-all duration-300">
                   <h4 className="text-xs tracking-widest mb-2 text-blue-400">HORARIO</h4>
                   <p className="text-sm text-muted-foreground">
-                     Lun - Vie
+                     Lunes - Viernes
                      <br />
                      9:00 - 18:00
                   </p>
@@ -296,10 +270,16 @@ export const Portfolio = () => {
                <div key={artwork.id} className="relative group cursor-pointer">
                   <div className="relative overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500">
                      <img
-                        src={`https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=600&h=800&fit=crop&sig=${artwork.id}`}
+                        src={artwork.image}
                         alt={artwork.title}
                         className="w-full aspect-[3/4] object-cover transition-transform duration-500 group-hover:scale-110"
                      />
+                     <Fullscreen
+                        size={35}
+                        onClick={() => window.open(artwork.image, "_blank")}
+                        className="absolute z-10 bottom-4 right-4 bg-black/30 hover:bg-black/40 p-1 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
+                     />
+
                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
 
                      <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-500">
@@ -310,39 +290,22 @@ export const Portfolio = () => {
                      </div>
                   </div>
 
-                  <span
-                     className={`absolute top-0 right-0 m-2 px-2 py-1 text-xs font-medium ${
-                        artwork.available
-                           ? "text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30"
-                           : "text-red-500 bg-red-100 dark:bg-red-900/30"
-                     }`}
-                  >
-                     {artwork.available ? "DISPONIBLE" : "ENTREGADA"}
+                  <span className="absolute top-2 right-2 m-2 px-2 py-1 text-xs font-medium text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30">
+                     DISPONIBLE
                   </span>
 
                   <div className="space-y-3 p-4 bg-gradient-to-b from-muted/90 to-muted/10 border-x border-b border-foreground/10">
-                     {artwork.available ? (
-                        <div className="flex justify-between items-center">
-                           <span className="text-lg font-semibold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                              {artwork.price}
-                           </span>
-                           <button
-                              onClick={() => window.open(url, "_blank")}
-                              className="text-xs tracking-widest hover:text-blue-400 transition-all duration-300 border border-foreground/20 hover:border-blue-400/60 px-4 py-2 hover:shadow-md hover:shadow-blue-400/20 hover:bg-blue-400/5"
-                           >
-                              CONSULTAR
-                           </button>
-                        </div>
-                     ) : (
-                        <div className="flex justify-center items-center">
-                           <button
-                              disabled={true}
-                              className="text-xs tracking-widest border border-foreground/20 px-4 py-2 cursor-not-allowed text-black/50 dark:text-white/50"
-                           >
-                              NO DISPONIBLE
-                           </button>
-                        </div>
-                     )}
+                     <div className="flex justify-between items-center">
+                        <span className="text-lg font-semibold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                           $ {artwork.price}
+                        </span>
+                        <button
+                           onClick={() => window.open(url, "_blank")}
+                           className="text-xs tracking-widest hover:text-blue-400 transition-all duration-300 border border-foreground/20 hover:border-blue-400/60 px-4 py-2 hover:shadow-md hover:shadow-blue-400/20 hover:bg-blue-400/5"
+                        >
+                           CONSULTAR
+                        </button>
+                     </div>
                   </div>
                </div>
             ))}

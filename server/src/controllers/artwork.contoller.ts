@@ -25,7 +25,28 @@ export const createArtwork = async (req: Request, res: Response) => {
 
       res.status(200).json({
          success: true,
+         message: "Creación exitosa",
          newArtwork: artwork,
+      });
+   } catch {
+      res.status(500).json({
+         success: false,
+         message: "server error",
+      });
+   }
+};
+
+export const editArtwork = async (req: Request, res: Response) => {
+   try {
+      const { title, price, size, year, image } = req.body;
+      const { id } = req.params;
+
+      const artwork = await artworkService.edit(id, title, price, size, year, image);
+
+      res.status(200).json({
+         success: true,
+         message: "Edición exitosa",
+         artwork: artwork,
       });
    } catch {
       res.status(500).json({
@@ -43,6 +64,7 @@ export const deleteArtwork = async (req: Request, res: Response) => {
 
       res.status(200).json({
          success: true,
+         message: "Eliminación exitosa",
          artwork: artwork,
       });
    } catch {

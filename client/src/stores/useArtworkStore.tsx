@@ -24,7 +24,7 @@ type Store = {
    artworks: Artwork[];
    getArtworks: () => Promise<void>;
    createArtwork: (values: CreateProps) => Promise<void>;
-   // edit
+   editArtwork: (values: CreateProps, id: string) => Promise<void>;
    deleteArtwork: (id: string) => Promise<void>;
 };
 
@@ -61,9 +61,39 @@ export const useArtworkStore = create<Store>((set, get) => ({
 
          if (res.data.success) {
             toast.success(res.data.message);
-            const currentArtwork = get().artworks;
+            const currentArtworks = get().artworks;
             const newArtwork = res.data.newArtwork;
-            set({ artworks: [...currentArtwork, newArtwork] });
+            set({ artworks: [...currentArtworks, newArtwork] });
+         }
+      } catch (error) {
+         toast.error(error.response.data.message);
+      } finally {
+         set({ isLoading: false });
+      }
+   },
+
+   editArtwork: async (values, id) => {
+      set({ isLoading: true });
+      try {
+         const body = {
+            title: values.title,
+            price: values.price,
+            size: values.size,
+            year: values.year,
+            image: values.image,
+         };
+
+         const res = await api.post(`/artwork/edit/${id}`, body);
+
+         if (res.data.success) {
+            toast.success(res.data.message);
+            const currentArtworks = get().artworks;
+            const updatedArtwork = res.data.artwork;
+            set({
+               artworks: currentArtworks.map((artwork) =>
+                  artwork.id === id ? updatedArtwork : artwork,
+               ),
+            });
          }
       } catch (error) {
          toast.error(error.response.data.message);

@@ -1,46 +1,47 @@
 import { Container } from "@/components/layout/Container";
+import { Fullscreen } from "lucide-react";
 
 export const GallerySection = () => {
    const galleryImages = [
       {
          id: 1,
-         src: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=600&fit=crop",
+         src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468123/521114125_18496309984067158_4845615388996651374_n._uuorar.jpg",
          className: "h-80",
       },
       {
          id: 2,
-         src: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
-         className: "h-60",
+         src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468122/505398277_17885949300291171_4636645246508492489_n._xalwf7.jpg",
+         className: "h-80",
       },
       {
          id: 3,
-         src: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=400&fit=crop",
-         className: "h-72",
+         src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468122/523112383_18496309945067158_6788491316897620871_n._ylpvhu.jpg",
+         className: "h-80",
       },
       {
          id: 4,
-         src: "https://images.unsplash.com/photo-1536924940846-227afb31e2a5?w=400&h=500&fit=crop",
-         className: "h-96",
+         src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468131/835398277_17885949300291171_4636645246508492489_qc2mlb.png",
+         className: "h-80",
       },
       {
          id: 5,
-         src: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=400&h=300&fit=crop",
-         className: "h-64",
+         src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468122/516775856_1918847162262659_1852698867600959511_n._gpwre8.jpg",
+         className: "h-80",
       },
       {
          id: 6,
-         src: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=700&fit=crop&sig=2",
+         src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468122/523712886_18496309969067158_1445899787344711914_n._ebsky0.jpg",
          className: "h-80",
       },
       {
          id: 7,
-         src: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=400&fit=crop&sig=3",
-         className: "h-72",
+         src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468122/517348890_753842867327050_64738216707787192_n._d9e24a.jpg",
+         className: "h-80",
       },
       {
          id: 8,
-         src: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=300&fit=crop&sig=4",
-         className: "h-64",
+         src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468122/496717255_18496994686024094_1930170544099970796_n._skhhu4.jpg",
+         className: "h-80",
       },
    ];
 
@@ -66,6 +67,12 @@ export const GallerySection = () => {
                            alt={`Galería ${image.id}`}
                            className={`w-full object-cover group-hover:scale-105 transition-transform duration-500 ${image.className}`}
                         />
+                        <Fullscreen
+                           size={35}
+                           onClick={() => window.open(image.src, "_blank")}
+                           className="absolute z-10 bottom-4 right-4 bg-black/30 hover:bg-black/40 p-1 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
+                        />
+
                         <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-all duration-300" />
                      </div>
                   </div>

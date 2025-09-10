@@ -12,7 +12,7 @@ type Activity = {
    spots: string;
 };
 
-type CreateProps = {
+type ActivityProps = {
    title: string;
    date: string;
    time: string;
@@ -25,8 +25,8 @@ type Store = {
    isLoading: boolean;
    activities: Activity[];
    getActivities: () => Promise<void>;
-   createActivity: (values: CreateProps) => Promise<void>;
-   // edit
+   createActivity: (values: ActivityProps) => Promise<void>;
+   editActivity: (values: ActivityProps, id: string) => Promise<void>;
    deleteActivity: (id: string) => Promise<void>;
 };
 
@@ -67,6 +67,37 @@ export const useActivityStore = create<Store>((set, get) => ({
             const currentActivities = get().activities;
             const newActivity = res.data.newActivity;
             set({ activities: [...currentActivities, newActivity] });
+         }
+      } catch (error) {
+         toast.error(error.response.data.message);
+      } finally {
+         set({ isLoading: false });
+      }
+   },
+
+   editActivity: async (values, id) => {
+      set({ isLoading: true });
+      try {
+         const body = {
+            title: values.title,
+            date: values.date,
+            time: values.time,
+            image: values.image,
+            description: values.description,
+            spots: values.spots,
+         };
+
+         const res = await api.post(`/activity/edit/${id}`, body);
+
+         if (res.data.success) {
+            toast.success(res.data.message);
+            const currentActivities = get().activities;
+            const updatedActivity = res.data.activity;
+            set({
+               activities: currentActivities.map((activity) =>
+                  activity.id === id ? updatedActivity : activity,
+               ),
+            });
          }
       } catch (error) {
          toast.error(error.response.data.message);

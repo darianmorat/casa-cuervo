@@ -32,7 +32,36 @@ export const createActivity = async (req: Request, res: Response) => {
 
       res.status(200).json({
          success: true,
+         message: "Creación exitosa",
          newActivity: activity,
+      });
+   } catch {
+      res.status(500).json({
+         success: false,
+         message: "server error",
+      });
+   }
+};
+
+export const editActivity = async (req: Request, res: Response) => {
+   try {
+      const { title, date, time, image, description, spots } = req.body;
+      const { id } = req.params;
+
+      const activity = await activityService.edit(
+         id,
+         title,
+         date,
+         time,
+         image,
+         description,
+         spots,
+      );
+
+      res.status(200).json({
+         success: true,
+         message: "Edición exitosa",
+         activity: activity,
       });
    } catch {
       res.status(500).json({
@@ -50,6 +79,7 @@ export const deleteActivity = async (req: Request, res: Response) => {
 
       res.status(200).json({
          success: true,
+         message: "Eliminación exitosa",
          activity: activity,
       });
    } catch {

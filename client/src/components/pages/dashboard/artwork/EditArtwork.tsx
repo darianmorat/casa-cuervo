@@ -7,10 +7,12 @@ import {
    FormLabel,
    FormMessage,
 } from "@/components/ui/form";
-import type { UseFormReturn } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, type UseFormReturn } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/Modal";
 import { Save, X } from "lucide-react";
+import { artworkSchema } from "./ArtworkSchema";
 
 type ArtworkFormData = {
    title: string;
@@ -20,21 +22,33 @@ type ArtworkFormData = {
    image: string;
 };
 
-interface CreateArtworkProps {
+interface EditArtworkProps {
+   artwork: ArtworkFormData;
    artworkForm: UseFormReturn<ArtworkFormData>;
-   handleCreateArtwork: (data: ArtworkFormData) => void;
+   handleEditArtwork: (data: ArtworkFormData) => void;
    closeForm: () => void;
 }
 
-export const CreateArtwork = ({
-   artworkForm,
-   handleCreateArtwork,
+export const EditArtwork = ({
+   artwork,
+   handleEditArtwork,
    closeForm,
-}: CreateArtworkProps) => {
+}: EditArtworkProps) => {
+   const artworkForm = useForm({
+      resolver: zodResolver(artworkSchema),
+      defaultValues: {
+         title: artwork.title,
+         price: artwork.price,
+         size: artwork.size,
+         year: artwork.year,
+         image: artwork.image,
+      },
+   });
+
    return (
       <Modal onClose={closeForm} orientation="right">
          <div className="relative bg-background dark:bg-card p-6 w-full max-w-lg">
-            <h3 className="text-lg font-semibold mb-4">Nueva obra</h3>
+            <h3 className="text-lg font-semibold mb-4">Editar obra</h3>
 
             <Button
                type="button"
@@ -47,7 +61,7 @@ export const CreateArtwork = ({
 
             <Form {...artworkForm}>
                <form
-                  onSubmit={artworkForm.handleSubmit(handleCreateArtwork)}
+                  onSubmit={artworkForm.handleSubmit(handleEditArtwork)}
                   className="space-y-4"
                >
                   <FormField

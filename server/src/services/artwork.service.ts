@@ -24,6 +24,23 @@ export const artworkService = {
       return result;
    },
 
+   edit: async (
+      id: string,
+      title: string,
+      price: string,
+      size: string,
+      year: string,
+      image: string,
+   ) => {
+      const [result] = await db
+         .update(artworks)
+         .set({ title, price, size, year, image })
+         .where(eq(artworks.id, id))
+         .returning();
+
+      return result;
+   },
+
    delete: async (id: string) => {
       const [result] = await db.delete(artworks).where(eq(artworks.id, id)).returning();
 
