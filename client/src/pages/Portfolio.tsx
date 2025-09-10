@@ -265,51 +265,57 @@ export const Portfolio = () => {
             <div className="w-24 h-px bg-gradient-to-r from-transparent via-foreground/40 to-transparent mx-auto" />
          </div>
 
-         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {artworks.map((artwork) => (
-               <div key={artwork.id} className="relative group cursor-pointer">
-                  <div className="relative overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500">
-                     <img
-                        src={artwork.image}
-                        alt={artwork.title}
-                        className="w-full aspect-[3/4] object-cover transition-transform duration-500 group-hover:scale-110"
-                     />
-                     <Fullscreen
-                        size={35}
-                        onClick={() => window.open(artwork.image, "_blank")}
-                        className="absolute z-10 bottom-4 right-4 bg-black/30 hover:bg-black/40 p-1 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
-                     />
+         {artworks.length <= 0 ? (
+            <div className="text-center text-muted-foreground">
+               Upps! Parece que no hay obras
+            </div>
+         ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+               {artworks.map((artwork) => (
+                  <div key={artwork.id} className="relative group cursor-pointer">
+                     <div className="relative overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500">
+                        <img
+                           src={artwork.image}
+                           alt={artwork.title}
+                           className="w-full aspect-[3/4] object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                        <Fullscreen
+                           size={35}
+                           onClick={() => window.open(artwork.image, "_blank")}
+                           className="absolute z-10 bottom-4 right-4 bg-black/30 hover:bg-black/40 p-1 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
+                        />
 
-                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
 
-                     <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-                        <h3 className="text-lg font-medium mb-1">{artwork.title}</h3>
-                        <p className="text-sm opacity-90">
-                           {artwork.size} • {artwork.year}
-                        </p>
+                        <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                           <h3 className="text-lg font-medium mb-1">{artwork.title}</h3>
+                           <p className="text-sm opacity-90">
+                              {artwork.size} • {artwork.year}
+                           </p>
+                        </div>
+                     </div>
+
+                     <span className="absolute top-2 right-2 m-2 px-2 py-1 text-xs font-medium text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30">
+                        DISPONIBLE
+                     </span>
+
+                     <div className="space-y-3 p-4 bg-gradient-to-b from-muted/90 to-muted/10 border-x border-b border-foreground/10">
+                        <div className="flex justify-between items-center">
+                           <span className="text-lg font-semibold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                              $ {artwork.price}
+                           </span>
+                           <button
+                              onClick={() => window.open(url, "_blank")}
+                              className="text-xs tracking-widest hover:text-blue-400 transition-all duration-300 border border-foreground/20 hover:border-blue-400/60 px-4 py-2 hover:shadow-md hover:shadow-blue-400/20 hover:bg-blue-400/5"
+                           >
+                              CONSULTAR
+                           </button>
+                        </div>
                      </div>
                   </div>
-
-                  <span className="absolute top-2 right-2 m-2 px-2 py-1 text-xs font-medium text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30">
-                     DISPONIBLE
-                  </span>
-
-                  <div className="space-y-3 p-4 bg-gradient-to-b from-muted/90 to-muted/10 border-x border-b border-foreground/10">
-                     <div className="flex justify-between items-center">
-                        <span className="text-lg font-semibold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                           $ {artwork.price}
-                        </span>
-                        <button
-                           onClick={() => window.open(url, "_blank")}
-                           className="text-xs tracking-widest hover:text-blue-400 transition-all duration-300 border border-foreground/20 hover:border-blue-400/60 px-4 py-2 hover:shadow-md hover:shadow-blue-400/20 hover:bg-blue-400/5"
-                        >
-                           CONSULTAR
-                        </button>
-                     </div>
-                  </div>
-               </div>
-            ))}
-         </div>
+               ))}
+            </div>
+         )}
       </div>
    );
 
