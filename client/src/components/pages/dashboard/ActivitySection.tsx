@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useActivityStore } from "@/stores/useActivityStore";
-import { X, Plus, Calendar, Clock, Ticket, PencilLine } from "lucide-react";
+import { X, Plus, Calendar, Clock, Ticket, PencilLine, Phone } from "lucide-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +17,7 @@ type ActivityFormData = {
    image: string;
    description: string;
    spots: string;
+   phone: string;
 };
 
 type ShowFormState = {
@@ -44,6 +45,7 @@ export const ActivitySection = () => {
          image: "",
          description: "",
          spots: "",
+         phone: "",
       },
    });
 
@@ -130,6 +132,10 @@ export const ActivitySection = () => {
                                  <div className="flex items-center gap-2">
                                     <Clock size={16} />
                                     <span>{activity.time}</span>
+                                 </div>
+                                 <div className="flex items-center gap-2">
+                                    <Phone size={16} />
+                                    <span>{activity.phone}</span>
                                  </div>
                               </div>
                               <p className="text-muted-foreground bg-accent p-2 leading-relaxed text-sm h-full">

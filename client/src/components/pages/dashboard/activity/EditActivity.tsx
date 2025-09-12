@@ -22,6 +22,7 @@ type ActivityFormData = {
    image: string;
    description: string;
    spots: string;
+   phone: string;
 };
 
 interface CreateActivityProps {
@@ -45,6 +46,7 @@ export const EditActivity = ({
          image: activity.image,
          description: activity.description,
          spots: activity.spots,
+         phone: activity.phone,
       },
    });
 
@@ -155,6 +157,20 @@ export const EditActivity = ({
                            <FormLabel>Cupos</FormLabel>
                            <FormControl>
                               <Input {...field} placeholder="8 cupos disponibles" />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+
+                  <FormField
+                     control={activityForm.control}
+                     name="phone"
+                     render={({ field }) => (
+                        <FormItem>
+                           <FormLabel>Celular:</FormLabel>
+                           <FormControl>
+                              <Input {...field} placeholder="Numero representante del evento" />
                            </FormControl>
                            <FormMessage />
                         </FormItem>

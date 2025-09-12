@@ -19,7 +19,7 @@ export const getActivities = async (_req: Request, res: Response) => {
 
 export const createActivity = async (req: Request, res: Response) => {
    try {
-      const { title, date, time, image, description, spots } = req.body;
+      const { title, date, time, image, description, spots, phone } = req.body;
 
       const activity = await activityService.create(
          title,
@@ -28,6 +28,7 @@ export const createActivity = async (req: Request, res: Response) => {
          image,
          description,
          spots,
+         phone,
       );
 
       res.status(200).json({
@@ -45,7 +46,7 @@ export const createActivity = async (req: Request, res: Response) => {
 
 export const editActivity = async (req: Request, res: Response) => {
    try {
-      const { title, date, time, image, description, spots } = req.body;
+      const { title, date, time, image, description, spots, phone } = req.body;
       const { id } = req.params;
 
       const activity = await activityService.edit(
@@ -56,6 +57,7 @@ export const editActivity = async (req: Request, res: Response) => {
          image,
          description,
          spots,
+         phone,
       );
 
       res.status(200).json({

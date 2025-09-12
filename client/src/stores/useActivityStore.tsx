@@ -10,6 +10,7 @@ type Activity = {
    image: string;
    description: string;
    spots: string;
+   phone: string;
 };
 
 type ActivityProps = {
@@ -19,6 +20,7 @@ type ActivityProps = {
    image: string;
    description: string;
    spots: string;
+   phone: string;
 };
 
 type Store = {
@@ -58,6 +60,7 @@ export const useActivityStore = create<Store>((set, get) => ({
             image: values.image,
             description: values.description,
             spots: values.spots,
+            phone: values.phone,
          };
 
          const res = await api.post("/activity/create", body);
@@ -85,6 +88,7 @@ export const useActivityStore = create<Store>((set, get) => ({
             image: values.image,
             description: values.description,
             spots: values.spots,
+            phone: values.phone,
          };
 
          const res = await api.post(`/activity/edit/${id}`, body);

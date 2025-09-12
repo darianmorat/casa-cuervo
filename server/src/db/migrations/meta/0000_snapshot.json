@@ -1,5 +1,5 @@
 {
-  "id": "4416f4b0-073d-412a-a797-75632b32b9fb",
+  "id": "f8cbcbdd-3dd2-4ed7-befb-6ed351e72a63",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -94,6 +94,12 @@
         },
         "spots": {
           "name": "spots",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "name": "phone",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true

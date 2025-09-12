@@ -20,6 +20,7 @@ type ActivityFormData = {
    image: string;
    description: string;
    spots: string;
+   phone: string;
 };
 
 interface CreateActivityProps {
@@ -35,7 +36,7 @@ export const CreateActivity = ({
 }: CreateActivityProps) => {
    return (
       <Modal onClose={closeForm} orientation="right">
-         <div className="relative bg-background dark:bg-card p-6 w-full max-w-lg">
+         <div className="relative bg-background dark:bg-card p-6 w-full max-w-lg overflow-y-scroll">
             <h3 className="text-lg font-semibold mb-4">Nueva actividad</h3>
 
             <Button
@@ -50,7 +51,7 @@ export const CreateActivity = ({
             <Form {...activityForm}>
                <form
                   onSubmit={activityForm.handleSubmit(handleCreateActivity)}
-                  className="space-y-4"
+                  className="space-y-6"
                >
                   <FormField
                      control={activityForm.control}
@@ -139,7 +140,21 @@ export const CreateActivity = ({
                         <FormItem>
                            <FormLabel>Cupos</FormLabel>
                            <FormControl>
-                              <Input {...field} placeholder="8 cupos disponibles" />
+                              <Input {...field} placeholder="00 Cantidad" />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+
+                  <FormField
+                     control={activityForm.control}
+                     name="phone"
+                     render={({ field }) => (
+                        <FormItem>
+                           <FormLabel>Celular:</FormLabel>
+                           <FormControl>
+                              <Input {...field} placeholder="Numero representante del evento" />
                            </FormControl>
                            <FormMessage />
                         </FormItem>

@@ -16,10 +16,11 @@ export const activityService = {
       image: string,
       description: string,
       spots: string,
+      phone: string,
    ) => {
       const [result] = await db
          .insert(activities)
-         .values({ title, date, time, image, description, spots })
+         .values({ title, date, time, image, description, spots, phone })
          .returning();
 
       return result;
@@ -33,10 +34,11 @@ export const activityService = {
       image: string,
       description: string,
       spots: string,
+      phone: string,
    ) => {
       const [result] = await db
          .update(activities)
-         .set({ title, date, time, image, description, spots })
+         .set({ title, date, time, image, description, spots, phone })
          .where(eq(activities.id, id))
          .returning();
 

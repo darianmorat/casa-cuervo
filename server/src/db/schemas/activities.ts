@@ -11,5 +11,6 @@ export const activities = pgTable("activities", {
    image: varchar({ length: 255 }).notNull(),
    description: varchar({ length: 255 }).notNull(),
    spots: varchar({ length: 255 }).notNull(),
+   phone: varchar({ length: 255 }).notNull(),
    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

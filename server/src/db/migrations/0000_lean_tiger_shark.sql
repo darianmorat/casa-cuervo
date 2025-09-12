@@ -14,6 +14,7 @@ CREATE TABLE "activities" (
 	"image" varchar(255) NOT NULL,
 	"description" varchar(255) NOT NULL,
 	"spots" varchar(255) NOT NULL,
+	"phone" varchar(255) NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint

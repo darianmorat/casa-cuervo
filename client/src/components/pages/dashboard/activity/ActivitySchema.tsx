@@ -8,5 +8,10 @@ export const activitySchema = z.object({
    description: z
       .string()
       .min(10, { message: "Descripción debe tener al menos 10 caracteres" }),
-   spots: z.string().min(1, { message: "Información de cupos es requerida" }),
+   spots: z
+      .string()
+      .regex(/^[1-9]\d{0,2}$/, { message: "Cupos debe ser un número entre 1 y 999" }),
+   phone: z
+      .string()
+      .regex(/^\d{10}$/, { message: "Teléfono debe tener exactamente 10 dígitos" }),
 });
