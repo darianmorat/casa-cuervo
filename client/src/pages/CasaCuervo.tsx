@@ -2,6 +2,7 @@ import { HeroSection } from "@/components/pages/casa-cuervo/HeroSection";
 import { ActivitySection } from "@/components/pages/casa-cuervo/ActivitySection";
 import { GallerySection } from "@/components/pages/casa-cuervo/GallerySection";
 import { RentingSection } from "@/components/pages/casa-cuervo/RentingSection";
+import { ZoneSection } from "@/components/pages/casa-cuervo/ZoneSection";
 
 export const CasaCuervo = () => {
    return (
@@ -9,6 +10,7 @@ export const CasaCuervo = () => {
          <HeroSection />
          <ActivitySection />
          <GallerySection />
+         <ZoneSection />
          <RentingSection />
 
          <footer className="border-t border-foreground/10 py-8 mt-auto relative z-10 bg-muted/20 backdrop-blur-sm">
