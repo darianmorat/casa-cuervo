@@ -85,7 +85,7 @@ export const Portfolio = () => {
 
          <div className="text-center mb-20">
             <h1 className="text-5xl md:text-6xl font-thin tracking-widest mb-6 bg-gradient-to-r from-foreground via-blue-400 to-foreground bg-clip-text text-transparent">
-               LAURA GÓMEZ ESTRADA
+               LA CUERVO
             </h1>
             <div className="w-32 h-[2px] bg-gradient-to-r from-transparent via-blue-400/60 via-purple-400/60 to-transparent mx-auto mb-6" />
             <p className="text-sm tracking-[0.4em] text-muted-foreground/80 font-light">
