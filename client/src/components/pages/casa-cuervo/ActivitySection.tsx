@@ -16,10 +16,8 @@ export const ActivitySection = () => {
       <section id="actividades" className="bg-background py-20">
          <Container>
             <div className="text-center mb-16">
-               <h2 className="text-4xl font-light text-foreground mb-4 tracking-wide">
-                  Actividades
-               </h2>
-               <div className="w-16 h-px bg-border mx-auto" />
+               <h2 className="text-4xl font-thin tracking-wide mb-6">Actividades</h2>
+               <div className="w-24 h-px bg-gradient-to-r from-transparent via-foreground/40 to-transparent mx-auto" />
             </div>
 
             {activities.length <= 0 ? (

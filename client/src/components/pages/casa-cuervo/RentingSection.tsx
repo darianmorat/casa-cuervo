@@ -21,18 +21,14 @@ export const RentingSection = () => {
    return (
       <section
          id="alquiler"
-         className="bg-background py-20 border-t border-foreground/10"
+         className="bg-muted/30 py-20 border-t border-foreground/10"
       >
          <Container>
             <div className="text-center mb-16">
                <h2 className="text-4xl font-thin tracking-wide mb-6">
                   Alquiler de Espacio
                </h2>
-               <div className="w-24 h-px bg-gradient-to-r from-transparent via-foreground/40 to-transparent mx-auto mb-4" />
-               <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                  Un espacio único para eventos, talleres y exposiciones en el corazón de
-                  la ciudad
-               </p>
+               <div className="w-24 h-px bg-gradient-to-r from-transparent via-foreground/40 to-transparent mx-auto" />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 max-w-6xl mx-auto">

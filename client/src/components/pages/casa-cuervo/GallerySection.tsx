@@ -49,10 +49,8 @@ export const GallerySection = () => {
       <section id="galeria" className="bg-muted/30 py-20 border-t border-foreground/10">
          <Container>
             <div className="text-center mb-16">
-               <h2 className="text-4xl font-light text-foreground mb-4 tracking-wide">
-                  Galería
-               </h2>
-               <div className="w-16 h-px bg-border mx-auto" />
+               <h2 className="text-4xl font-thin tracking-wide mb-6">Galeria</h2>
+               <div className="w-24 h-px bg-gradient-to-r from-transparent via-foreground/40 to-transparent mx-auto" />
             </div>
 
             <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6">
