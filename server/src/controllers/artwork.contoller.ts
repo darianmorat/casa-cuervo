@@ -19,9 +19,19 @@ export const getArtworks = async (_req: Request, res: Response) => {
 
 export const createArtwork = async (req: Request, res: Response) => {
    try {
-      const { title, price, size, year, image } = req.body;
+      const { title, category, technique, price, size, year, image, available } =
+         req.body;
 
-      const artwork = await artworkService.create(title, price, size, year, image);
+      const artwork = await artworkService.create(
+         title,
+         category,
+         technique,
+         price,
+         size,
+         year,
+         image,
+         available,
+      );
 
       res.status(200).json({
          success: true,
@@ -38,10 +48,21 @@ export const createArtwork = async (req: Request, res: Response) => {
 
 export const editArtwork = async (req: Request, res: Response) => {
    try {
-      const { title, price, size, year, image } = req.body;
+      const { title, category, technique, price, size, year, image, available } =
+         req.body;
       const { id } = req.params;
 
-      const artwork = await artworkService.edit(id, title, price, size, year, image);
+      const artwork = await artworkService.edit(
+         id,
+         title,
+         category,
+         technique,
+         price,
+         size,
+         year,
+         image,
+         available,
+      );
 
       res.status(200).json({
          success: true,

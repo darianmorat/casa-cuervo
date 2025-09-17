@@ -5,18 +5,24 @@ import api from "@/api/axios";
 type Artwork = {
    id: string;
    title: string;
+   category: string;
+   technique: string;
    price: string;
    size: string;
    year: string;
    image: string;
+   available: boolean;
 };
 
 type CreateProps = {
    title: string;
+   category: string;
+   technique: string;
    price: string;
    size: string;
    year: string;
    image: string;
+   available: boolean;
 };
 
 type Store = {
@@ -51,10 +57,13 @@ export const useArtworkStore = create<Store>((set, get) => ({
       try {
          const body = {
             title: values.title,
+            category: values.category,
+            technique: values.technique,
             price: values.price,
             size: values.size,
             year: values.year,
             image: values.image,
+            available: values.available,
          };
 
          const res = await api.post("/artwork/create", body);
@@ -77,10 +86,13 @@ export const useArtworkStore = create<Store>((set, get) => ({
       try {
          const body = {
             title: values.title,
+            category: values.category,
+            technique: values.technique,
             price: values.price,
             size: values.size,
             year: values.year,
             image: values.image,
+            available: values.available,
          };
 
          const res = await api.post(`/artwork/edit/${id}`, body);

@@ -11,14 +11,17 @@ export const artworkService = {
 
    create: async (
       title: string,
+      category: string,
+      technique: string,
       price: string,
       size: string,
       year: string,
       image: string,
+      available: boolean,
    ) => {
       const [result] = await db
          .insert(artworks)
-         .values({ title, price, size, year, image })
+         .values({ title, category, technique, price, size, year, image, available })
          .returning();
 
       return result;
@@ -27,14 +30,17 @@ export const artworkService = {
    edit: async (
       id: string,
       title: string,
+      category: string,
+      technique: string,
       price: string,
       size: string,
       year: string,
       image: string,
+      available: boolean,
    ) => {
       const [result] = await db
          .update(artworks)
-         .set({ title, price, size, year, image })
+         .set({ title, category, technique, price, size, year, image, available })
          .where(eq(artworks.id, id))
          .returning();
 

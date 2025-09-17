@@ -7,18 +7,20 @@ import {
    FormLabel,
    FormMessage,
 } from "@/components/ui/form";
+import {
+   Select,
+   SelectContent,
+   SelectItem,
+   SelectTrigger,
+   SelectValue,
+} from "@/components/ui/select";
 import type { UseFormReturn } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/Modal";
 import { Save, X } from "lucide-react";
-
-type ArtworkFormData = {
-   title: string;
-   price: string;
-   size: string;
-   year: string;
-   image: string;
-};
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import type { ArtworkFormData } from "./ArtworkSchema";
 
 interface CreateArtworkProps {
    artworkForm: UseFormReturn<ArtworkFormData>;
@@ -33,7 +35,7 @@ export const CreateArtwork = ({
 }: CreateArtworkProps) => {
    return (
       <Modal onClose={closeForm} orientation="right">
-         <div className="relative bg-background dark:bg-card p-6 w-full max-w-lg">
+         <div className="relative bg-background dark:bg-card p-6 w-full max-w-lg overflow-y-scroll">
             <h3 className="text-lg font-semibold mb-4">Nueva obra</h3>
 
             <Button
@@ -50,6 +52,33 @@ export const CreateArtwork = ({
                   onSubmit={artworkForm.handleSubmit(handleCreateArtwork)}
                   className="space-y-4"
                >
+                  <div className="bg-accent/50">
+                     <FormField
+                        control={artworkForm.control}
+                        name="available"
+                        render={({ field }) => (
+                           <FormItem className="flex flex-row items-center justify-between border-y p-4 mb-6">
+                              <div className="space-y-0.5">
+                                 <FormLabel className="text-base">
+                                    Disponibilidad
+                                 </FormLabel>
+                                 <div className="text-sm text-muted-foreground">
+                                    {field.value
+                                       ? "Esta obra está disponible para la venta"
+                                       : "Esta obra ya fue vendida"}
+                                 </div>
+                              </div>
+                              <FormControl>
+                                 <Switch
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                 />
+                              </FormControl>
+                           </FormItem>
+                        )}
+                     />
+                  </div>
+
                   <FormField
                      control={artworkForm.control}
                      name="title"
@@ -58,6 +87,51 @@ export const CreateArtwork = ({
                            <FormLabel>Título</FormLabel>
                            <FormControl>
                               <Input {...field} placeholder="Nombre de la obra" />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+
+                  <FormField
+                     control={artworkForm.control}
+                     name="category"
+                     render={({ field }) => (
+                        <FormItem>
+                           <FormLabel>Tipo</FormLabel>
+                           <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                           >
+                              <FormControl>
+                                 <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Selecciona el tipo de obra" />
+                                 </SelectTrigger>
+                              </FormControl>
+                              <SelectContent className="z-99">
+                                 <SelectItem value="pintura">Pintura</SelectItem>
+                                 <SelectItem value="mural">Mural</SelectItem>
+                                 <SelectItem value="esculturas">Esculturas</SelectItem>
+                                 <SelectItem value="grabado">Grabado</SelectItem>
+                              </SelectContent>
+                           </Select>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+
+                  <FormField
+                     control={artworkForm.control}
+                     name="technique"
+                     render={({ field }) => (
+                        <FormItem>
+                           <FormLabel>Tecnica</FormLabel>
+                           <FormControl>
+                              <Textarea
+                                 {...field}
+                                 rows={4}
+                                 placeholder="Descripción de tecnica usada..."
+                              />
                            </FormControl>
                            <FormMessage />
                         </FormItem>
