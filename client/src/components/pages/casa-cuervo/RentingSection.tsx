@@ -6,7 +6,6 @@ import {
    User,
    Clock,
    Users,
-   MapPin,
    Calendar,
    Home,
    Truck,
