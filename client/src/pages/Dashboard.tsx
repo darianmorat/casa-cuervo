@@ -1,13 +1,21 @@
 import React, { useState } from "react";
-import {  Calendar, Edit3, LogOut } from "lucide-react";
+import {
+   Calendar,
+   Edit3,
+   LogOut,
+   UserPenIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { Container } from "@/components/layout/Container";
 import { ActivitySection } from "@/components/pages/dashboard/ActivitySection";
 import { ArtworkSection } from "@/components/pages/dashboard/ArtworkSection";
+import { PersonalSection } from "@/components/pages/dashboard/PersonalSection";
 
 export const Dashboard: React.FC = () => {
-   const [activeTab, setActiveTab] = useState<"activities" | "artworks">("activities");
+   const [activeTab, setActiveTab] = useState<"activities" | "artworks" | "personal">(
+      "activities",
+   );
    const { logout } = useAuthStore();
 
    return (
@@ -37,7 +45,7 @@ export const Dashboard: React.FC = () => {
                   >
                      <div className="flex items-center space-x-2">
                         <Calendar className="w-4 h-4" />
-                        <span>Actividades</span>
+                        <span>Activities</span>
                      </div>
                   </button>
                   <button
@@ -50,7 +58,20 @@ export const Dashboard: React.FC = () => {
                   >
                      <div className="flex items-center space-x-2">
                         <Edit3 className="w-4 h-4" />
-                        <span>Obras</span>
+                        <span>Artworks</span>
+                     </div>
+                  </button>
+                  <button
+                     onClick={() => setActiveTab("personal")}
+                     className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                        activeTab === "personal"
+                           ? "border-primary text-primary"
+                           : "border-transparent text-muted-foreground hover:text-foreground"
+                     }`}
+                  >
+                     <div className="flex items-center space-x-2">
+                        <UserPenIcon className="w-5 h-5" />
+                        <span>Personal</span>
                      </div>
                   </button>
                </nav>
@@ -60,6 +81,7 @@ export const Dashboard: React.FC = () => {
          <Container size="large">
             {activeTab === "activities" && <ActivitySection />}
             {activeTab === "artworks" && <ArtworkSection />}
+            {activeTab === "personal" && <PersonalSection />}
          </Container>
       </div>
    );

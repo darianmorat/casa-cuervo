@@ -1,6 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { useActivityStore } from "@/stores/useActivityStore";
-import { X, Plus, Calendar, Clock, Ticket, PencilLine, Phone } from "lucide-react";
+import {
+   X,
+   Plus,
+   Calendar,
+   Clock,
+   Ticket,
+   PencilLine,
+   Phone,
+   Fullscreen,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -93,60 +102,67 @@ export const ActivitySection = () => {
                   .map((activity) => (
                      <div
                         key={activity.id}
-                        className="relative bg-card border overflow-hidden group"
+                        className="relative bg-card border border-border hover:border-muted-foreground/20 transition-all duration-300 hover:shadow-lg h-full flex flex-col group"
                      >
                         <X
-                           className="absolute z-10 top-0 right-0 w-8 h-8 bg-red-400 text-white p-1 hover:bg-red-500 hover:cursor-pointer opacity-0 group-hover:opacity-100 transition"
+                           className="absolute z-10 top-4 right-4 w-6 h-6 bg-red-500 text-white p-1 hover:bg-red-400 hover:cursor-pointer opacity-0 group-hover:opacity-100 transition"
                            onClick={() => openForm("delete", activity.id)}
                         />
-                        <div className="bg-card transition-all duration-300 hover:shadow-lg h-full flex flex-col">
-                           <div className="relative overflow-hidden">
-                              <img
-                                 src={activity.image}
-                                 alt={activity.title}
-                                 className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
-                              />
-                           </div>
 
-                           <div className="p-6 space-y-4 flex-1 flex flex-col">
-                              <h3 className="text-xl font-medium text-foreground">
-                                 {activity.title}
-                              </h3>
+                        <div className="relative overflow-hidden">
+                           <img
+                              src={activity.image}
+                              alt={activity.title}
+                              className="w-full h-50 object-cover group-hover:scale-105 transition-transform duration-500"
+                           />
+                           <Fullscreen
+                              size={25}
+                              onClick={() => window.open(activity.image, "_blank")}
+                              className="absolute z-10 bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
+                           />
+                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-200" />
+                        </div>
 
-                              <div className="flex flex-col gap-2 text-muted-foreground text-sm">
-                                 <div className="flex items-center gap-2">
-                                    <Ticket size={16} />
-                                    <span>{activity.spots} cupos</span>
-                                 </div>
-                                 <div className="flex items-center gap-2">
-                                    <Calendar size={16} />
-                                    <span>
-                                       {new Date(activity.date).toLocaleDateString("es", {
-                                          day: "2-digit",
-                                          month: "short",
-                                          year: "numeric",
-                                          timeZone: "UTC",
-                                       })}
-                                    </span>
-                                 </div>
-                                 <div className="flex items-center gap-2">
-                                    <Clock size={16} />
-                                    <span>{activity.time}</span>
-                                 </div>
-                                 <div className="flex items-center gap-2">
-                                    <Phone size={16} />
-                                    <span>{activity.phone}</span>
-                                 </div>
+                        <div className="p-6 space-y-4 flex-1 flex flex-col">
+                           <h3 className="text-xl font-medium text-foreground">
+                              {activity.title}
+                           </h3>
+
+                           <div className="flex flex-col gap-2 text-muted-foreground text-sm">
+                              <div className="flex items-center gap-2">
+                                 <Ticket size={16} />
+                                 <span>{activity.spots} cupos</span>
                               </div>
-                              <p className="text-muted-foreground bg-accent p-2 leading-relaxed text-sm h-full">
-                                 {activity.description}
-                              </p>
-                              <Button
-                                 onClick={() => openForm("edit", activity.id, activity)}
-                              >
-                                 <PencilLine /> Editar
-                              </Button>
+                              <div className="flex items-center gap-2">
+                                 <Calendar size={16} />
+                                 <span>
+                                    {new Date(activity.date).toLocaleDateString("es", {
+                                       day: "2-digit",
+                                       month: "short",
+                                       year: "numeric",
+                                       timeZone: "UTC",
+                                    })}
+                                 </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                 <Clock size={16} />
+                                 <span>{activity.time}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                 <Phone size={16} />
+                                 <span>{activity.phone}</span>
+                              </div>
                            </div>
+
+                           <div className="text-muted-foreground bg-accent p-2 border leading-relaxed text-sm flex-1">
+                              {activity.description}
+                           </div>
+
+                           <Button
+                              onClick={() => openForm("edit", activity.id, activity)}
+                           >
+                              <PencilLine /> Editar
+                           </Button>
                         </div>
                      </div>
                   ))}
