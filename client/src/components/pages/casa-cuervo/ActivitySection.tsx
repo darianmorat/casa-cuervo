@@ -1,7 +1,7 @@
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/button";
 import { useActivityStore } from "@/stores/useActivityStore";
-import { Calendar, Clock } from "lucide-react";
+import { Calendar, Clock, Fullscreen } from "lucide-react";
 import { useEffect } from "react";
 
 export const ActivitySection = () => {
@@ -37,12 +37,18 @@ export const ActivitySection = () => {
                         return (
                            <div key={activity.id} className="group">
                               <div className="bg-card border border-border hover:border-muted-foreground/20 transition-all duration-300 hover:shadow-lg h-full flex flex-col">
-                                 <div className="relative overflow-hidden">
+                                 <div className="relative overflow-hidden group">
                                     <img
                                        src={activity.image}
                                        alt={activity.title}
-                                       className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+                                       className="w-full h-55 object-cover group-hover:scale-105 transition-transform duration-500"
                                     />
+                                    <Fullscreen
+                                       size={25}
+                                       onClick={() => window.open(activity.image, "_blank")}
+                                       className="absolute z-10 bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-200" />
                                     <div className="absolute top-4 right-4 bg-white/85 text-black px-3 py-1 text-xs font-medium">
                                        {activity.spots} cupos
                                     </div>

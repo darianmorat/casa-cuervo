@@ -44,17 +44,18 @@ export const Portfolio = () => {
                   key={image.id}
                   className={`${index % 2 === 0 ? "mt-8" : ""} group cursor-pointer`}
                >
-                  <div className="relative overflow-hidden bg-muted/10 aspect-[3/4] shadow-lg hover:shadow-2xl transition-all duration-500">
+                  <div className="relative overflow-hidden bg-muted/10 aspect-[3/4] shadow-lg hover:shadow-2xl transition-all duration-500 group">
                      <img
                         src={image.src}
                         alt={image.alt}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                      />
                      <Fullscreen
-                        size={35}
+                        size={25}
                         onClick={() => window.open(image.src, "_blank")}
-                        className="absolute z-10 bottom-4 right-4 bg-black/30 hover:bg-black/40 p-1 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
+                        className="absolute z-10 bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
                      />
+                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-200" />
                   </div>
                </div>
             ))}
@@ -308,7 +309,7 @@ export const Portfolio = () => {
                                           className="absolute z-10 bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
                                        />
 
-                                       <div className="absolute inset-0 bg-gradient-to-t from-black/99 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+                                       <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
 
                                        <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-500">
                                           <h3 className="text-lg font-medium mb-1">

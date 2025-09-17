@@ -101,7 +101,11 @@ export const ZoneSection = () => {
                                  <p className="text-gray-600 leading-relaxed">
                                     {zone.description}
                                  </p>
-                                 <Button>Explorar espacio</Button>
+                                 <Button
+                                    onClick={() => window.open(zone.image, "_blank")}
+                                 >
+                                    Explorar espacio
+                                 </Button>
                               </div>
                               <div className="relative order-first md:order-last">
                                  <img

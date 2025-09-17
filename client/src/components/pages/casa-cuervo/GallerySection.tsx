@@ -66,12 +66,11 @@ export const GallerySection = () => {
                            className={`w-full object-cover group-hover:scale-105 transition-transform duration-500 ${image.className}`}
                         />
                         <Fullscreen
-                           size={35}
+                           size={25}
                            onClick={() => window.open(image.src, "_blank")}
-                           className="absolute z-10 bottom-4 right-4 bg-black/30 hover:bg-black/40 p-1 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
+                           className="absolute z-10 bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
                         />
-
-                        <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-all duration-300" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-200" />
                      </div>
                   </div>
                ))}
