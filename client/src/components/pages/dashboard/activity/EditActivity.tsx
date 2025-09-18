@@ -14,6 +14,14 @@ import { useForm, type UseFormReturn } from "react-hook-form";
 import { X, Save } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { activitySchema } from "./ActivitySchema";
+import { useEffect, useState } from "react";
+import { DropImage } from "@/components/ui/DropZone";
+import { useActivityStore } from "@/stores/useActivityStore";
+
+interface FileWithPreview extends File {
+   preview: string;
+   id: string;
+}
 
 type ActivityFormData = {
    title: string;
@@ -28,7 +36,7 @@ type ActivityFormData = {
 interface CreateActivityProps {
    activity: ActivityFormData;
    activityForm: UseFormReturn<ActivityFormData>;
-   handleEditActivity: (data: ActivityFormData) => void;
+   handleEditActivity: (data: ActivityFormData, files: FileWithPreview[]) => void;
    closeForm: () => void;
 }
 
@@ -37,6 +45,10 @@ export const EditActivity = ({
    handleEditActivity,
    closeForm,
 }: CreateActivityProps) => {
+   const [files, setFiles] = useState<FileWithPreview[]>([]);
+   const [isExistingImageDeleted, setIsExistingImageDeleted] = useState(false);
+   const { deleteAsset } = useActivityStore();
+
    const activityForm = useForm({
       resolver: zodResolver(activitySchema),
       defaultValues: {
@@ -50,23 +62,53 @@ export const EditActivity = ({
       },
    });
 
+   useEffect(() => {
+      if (files.length > 0) {
+         activityForm.setValue("image", files[0].name);
+         activityForm.clearErrors("image");
+      } else if (isExistingImageDeleted) {
+         activityForm.setValue("image", "");
+      } else {
+         activityForm.setValue("image", activity.image);
+      }
+   }, [files, isExistingImageDeleted, activityForm, activity.image]);
+
+   const handleMarkExistingImageForDeletion = () => {
+      setIsExistingImageDeleted(true);
+   };
+
+   const handleRestoreExistingImage = () => {
+      setIsExistingImageDeleted(false);
+   };
+
+   const handleFormSubmit = async (data: ActivityFormData) => {
+      await deleteAsset(activity.image);
+      handleEditActivity(data, files);
+   };
+
+   const handleCancel = () => {
+      setFiles([]);
+      setIsExistingImageDeleted(false);
+      closeForm();
+   };
+
    return (
-      <Modal onClose={closeForm} orientation="right">
-         <div className="relative bg-background dark:bg-card p-6 w-full max-w-lg">
+      <Modal onClose={handleCancel} orientation="right">
+         <div className="relative bg-background dark:bg-card p-6 w-full max-w-lg overflow-y-scroll">
             <h3 className="text-lg font-semibold mb-4">Editar actividad</h3>
 
             <Button
                type="button"
                variant={"ghost"}
                className="absolute right-2 top-2 text-muted-foreground"
-               onClick={closeForm}
+               onClick={handleCancel}
             >
                <X className="w-6 h-6" />
             </Button>
 
             <Form {...activityForm}>
                <form
-                  onSubmit={activityForm.handleSubmit(handleEditActivity)}
+                  onSubmit={activityForm.handleSubmit(handleFormSubmit)}
                   className="space-y-4"
                >
                   <FormField
@@ -120,16 +162,62 @@ export const EditActivity = ({
                   <FormField
                      control={activityForm.control}
                      name="image"
-                     render={({ field }) => (
+                     render={() => (
                         <FormItem>
-                           <FormLabel>URL de Imagen</FormLabel>
+                           <FormLabel>Subir Imagen</FormLabel>
                            <FormControl>
-                              <Input {...field} placeholder="https://..." type="url" />
+                              <DropImage files={files} setFiles={setFiles} />
                            </FormControl>
                            <FormMessage />
                         </FormItem>
                      )}
                   />
+
+                  <div className="bg-accent">
+                     <div className="space-y-2">
+                        {files.length > 0 ? null : !isExistingImageDeleted &&
+                          activity.image ? (
+                           <div className="space-y-2 p-4">
+                              <p className="text-sm text-muted-foreground text-center -mt-1">
+                                 Imagen actual:
+                              </p>
+                              <div className="h-30 w-30 relative">
+                                 <img
+                                    src={activity.image}
+                                    className="h-full w-full object-cover border-2 border-black/50"
+                                 />
+                                 <button
+                                    type="button"
+                                    onClick={handleMarkExistingImageForDeletion}
+                                    className="absolute -top-1 -right-1 bg-red-500 text-white w-5 h-5 flex items-center justify-center text-xs hover:bg-red-400"
+                                    title="Marcar para eliminar"
+                                 >
+                                    <X size={12} />
+                                 </button>
+                              </div>
+                           </div>
+                        ) : isExistingImageDeleted && !files.length ? (
+                           <div className="space-y-2 p-4">
+                              <p className="text-sm text-muted-foreground text-center -mt-1">
+                                 Imagen actual:
+                              </p>
+                              <div className="h-30 w-30 bg-red-50 border-2 border-dashed border-red-300 flex flex-col items-center justify-center text-red-600 text-sm p-1">
+                                 <img
+                                    src={activity.image}
+                                    className="h-full w-full object-cover relative opacity-20"
+                                 />
+                                 <button
+                                    type="button"
+                                    onClick={handleRestoreExistingImage}
+                                    className="text-sm text-blue-600 hover:text-blue-800 underline font-semibold absolute"
+                                 >
+                                    Restaurar
+                                 </button>
+                              </div>
+                           </div>
+                        ) : null}
+                     </div>
+                  </div>
 
                   <FormField
                      control={activityForm.control}
@@ -170,7 +258,10 @@ export const EditActivity = ({
                         <FormItem>
                            <FormLabel>Celular:</FormLabel>
                            <FormControl>
-                              <Input {...field} placeholder="Numero representante del evento" />
+                              <Input
+                                 {...field}
+                                 placeholder="Numero representante del evento"
+                              />
                            </FormControl>
                            <FormMessage />
                         </FormItem>
@@ -183,7 +274,7 @@ export const EditActivity = ({
                      </Button>
                      <Button
                         type="button"
-                        onClick={closeForm}
+                        onClick={handleCancel}
                         variant={"outline"}
                         className="flex-1"
                      >

@@ -15,6 +15,13 @@
       "when": 1758065606945,
       "tag": "0001_clammy_mesmero",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1758139546108,
+      "tag": "0002_greedy_surge",
+      "breakpoints": true
     }
   ]
 }

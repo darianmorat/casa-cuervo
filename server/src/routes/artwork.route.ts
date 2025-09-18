@@ -5,7 +5,7 @@ import {
    deleteArtwork,
    editArtwork,
    getArtworks,
-} from "../controllers/artwork.contoller";
+} from "../controllers/artwork.controller";
 
 const router = express.Router();
 

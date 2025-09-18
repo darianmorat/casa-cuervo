@@ -12,6 +12,13 @@ import { Textarea } from "@/components/ui/textarea";
 import type { UseFormReturn } from "react-hook-form";
 import { X, Save } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
+import { DropImage } from "@/components/ui/DropZone";
+import { useEffect, useState } from "react";
+
+interface FileWithPreview extends File {
+   preview: string;
+   id: string;
+}
 
 type ActivityFormData = {
    title: string;
@@ -25,7 +32,7 @@ type ActivityFormData = {
 
 interface CreateActivityProps {
    activityForm: UseFormReturn<ActivityFormData>;
-   handleCreateActivity: (data: ActivityFormData) => void;
+   handleCreateActivity: (data: ActivityFormData, files: FileWithPreview[]) => void;
    closeForm: () => void;
 }
 
@@ -34,6 +41,18 @@ export const CreateActivity = ({
    handleCreateActivity,
    closeForm,
 }: CreateActivityProps) => {
+   const [files, setFiles] = useState<FileWithPreview[]>([]);
+
+   // Add useEffect to update form field when files change
+   useEffect(() => {
+      if (files.length > 0) {
+         activityForm.setValue("image", files[0].name);
+         activityForm.clearErrors("image");
+      } else {
+         activityForm.setValue("image", "");
+      }
+   }, [files, activityForm]);
+
    return (
       <Modal onClose={closeForm} orientation="right">
          <div className="relative bg-background dark:bg-card p-6 w-full max-w-lg overflow-y-scroll">
@@ -50,7 +69,9 @@ export const CreateActivity = ({
 
             <Form {...activityForm}>
                <form
-                  onSubmit={activityForm.handleSubmit(handleCreateActivity)}
+                  onSubmit={activityForm.handleSubmit((data) =>
+                     handleCreateActivity(data, files),
+                  )}
                   className="space-y-6"
                >
                   <FormField
@@ -104,11 +125,11 @@ export const CreateActivity = ({
                   <FormField
                      control={activityForm.control}
                      name="image"
-                     render={({ field }) => (
+                     render={() => (
                         <FormItem>
-                           <FormLabel>URL de Imagen</FormLabel>
+                           <FormLabel>Subir Imagen</FormLabel>
                            <FormControl>
-                              <Input {...field} placeholder="https://..." type="url" />
+                              <DropImage files={files} setFiles={setFiles} />
                            </FormControl>
                            <FormMessage />
                         </FormItem>
@@ -140,7 +161,7 @@ export const CreateActivity = ({
                         <FormItem>
                            <FormLabel>Cupos</FormLabel>
                            <FormControl>
-                              <Input {...field} placeholder="00 Cantidad" />
+                              <Input {...field} placeholder="Cantidad disponible" />
                            </FormControl>
                            <FormMessage />
                         </FormItem>
@@ -154,7 +175,10 @@ export const CreateActivity = ({
                         <FormItem>
                            <FormLabel>Celular:</FormLabel>
                            <FormControl>
-                              <Input {...field} placeholder="Numero representante del evento" />
+                              <Input
+                                 {...field}
+                                 placeholder="Numero representante del evento"
+                              />
                            </FormControl>
                            <FormMessage />
                         </FormItem>

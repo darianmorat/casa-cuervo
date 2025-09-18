@@ -19,6 +19,11 @@ import { DeleteActivity } from "./activity/DeleteActivity";
 import { EditActivity } from "./activity/EditActivity";
 import { activitySchema } from "./activity/ActivitySchema";
 
+interface FileWithPreview extends File {
+   preview: string;
+   id: string;
+}
+
 type ActivityFormData = {
    title: string;
    date: string;
@@ -58,15 +63,21 @@ export const ActivitySection = () => {
       },
    });
 
-   const handleCreateActivity = (data: z.infer<typeof activitySchema>) => {
-      createActivity(data);
+   const handleCreateActivity = (
+      data: z.infer<typeof activitySchema>,
+      files: FileWithPreview[],
+   ) => {
+      createActivity(data, files);
       closeForm();
    };
 
-   const handleEditActivity = (data: z.infer<typeof activitySchema>) => {
+   const handleEditActivity = (
+      data: z.infer<typeof activitySchema>,
+      files: FileWithPreview[],
+   ) => {
       if (!showForm.id) return;
 
-      editActivity(data, showForm.id);
+      editActivity(data, files, showForm.id);
       closeForm();
    };
 
