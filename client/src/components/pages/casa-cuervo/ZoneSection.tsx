@@ -9,7 +9,7 @@ const zones = [
       name: "Patio",
       description:
          "Un espacio al aire libre perfecto para relajarse y conectar con la naturaleza",
-      image: "https://picsum.photos/600/400",
+      image: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468920/473368825_18474682114024094_7048284083203549906_n._siycn6.jpg",
    },
    {
       id: 2,
@@ -22,7 +22,7 @@ const zones = [
       id: 3,
       name: "Living",
       description: "Área de estar cómoda y acogedora para compartir momentos especiales",
-      image: "https://picsum.photos/600/400",
+      image: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468920/473368825_18474682114024094_7048284083203549906_n._siycn6.jpg",
    },
    {
       id: 4,
@@ -35,7 +35,7 @@ const zones = [
       id: 5,
       name: "Cocina",
       description: "El corazón del hogar donde se preparan comidas con amor y cuidado",
-      image: "https://picsum.photos/600/400",
+      image: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468920/473368825_18474682114024094_7048284083203549906_n._siycn6.jpg",
    },
 ];
 

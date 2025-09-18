@@ -129,7 +129,7 @@ export const CreateActivity = ({
                         <FormItem>
                            <FormLabel>Subir Imagen</FormLabel>
                            <FormControl>
-                              <DropImage files={files} setFiles={setFiles} />
+                              <DropImage files={files} setFiles={setFiles} maxFiles={1} />
                            </FormControl>
                            <FormMessage />
                         </FormItem>

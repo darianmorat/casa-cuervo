@@ -54,11 +54,6 @@ export const useActivityStore = create<Store>((set, get) => ({
    createActivity: async (values, files) => {
       set({ isLoading: true });
       try {
-         if (files.length !== 1) {
-            toast.error("Solo puedes subir una imagen.");
-            return;
-         }
-
          const resImg = await api.get("/asset/generate-signature");
          const file = files[0];
 
@@ -119,11 +114,6 @@ export const useActivityStore = create<Store>((set, get) => ({
    editActivity: async (values, files, id) => {
       set({ isLoading: true });
       try {
-         if (files.length !== 1) {
-            toast.error("Solo puedes subir una imagen.");
-            return;
-         }
-
          const resImg = await api.get("/asset/generate-signature");
          const file = files[0];
 

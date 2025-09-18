@@ -12,47 +12,68 @@ interface FileWithPreview extends File {
 type DropImageProps = {
    files: FileWithPreview[];
    setFiles: React.Dispatch<React.SetStateAction<FileWithPreview[]>>;
+   maxFiles?: number;
 };
 
-export const DropImage = ({ files, setFiles }: DropImageProps) => {
-   const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
-      if (acceptedFiles && acceptedFiles.length > 0) {
-         const newFiles = acceptedFiles.map(
-            (file) =>
-               Object.assign(file, {
-                  preview: URL.createObjectURL(file),
-                  id: uuid(),
-               }) as FileWithPreview,
-         );
+export const DropImage = ({ files, setFiles, maxFiles }: DropImageProps) => {
+   const onDrop = useCallback(
+      (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
+         if (acceptedFiles && acceptedFiles.length > 0) {
+            // Check if adding new files would exceed the maximum
+            const currentFileCount = files.length;
+            const totalAfterAdd = currentFileCount + acceptedFiles.length;
 
-         setFiles((prevFiles) => {
-            const updatedFiles = [...prevFiles, ...newFiles];
-            return updatedFiles;
-         });
-      }
+            if (maxFiles && totalAfterAdd > maxFiles) {
+               toast.error(
+                  `Máximo permitido: ${maxFiles} ${maxFiles === 1 ? "imagen" : "imágenes"}`,
+               );
+               return; // Don't add any files
+            }
 
-      if (rejectedFiles.length > 0) {
-         const errorCode = rejectedFiles[0].errors[0].code;
+            const newFiles = acceptedFiles.map(
+               (file) =>
+                  Object.assign(file, {
+                     preview: URL.createObjectURL(file),
+                     id: uuid(),
+                  }) as FileWithPreview,
+            );
 
-         if (errorCode === "too-many-files") {
-            toast.error("Límite de 10 imagenes");
-         } else if (errorCode === "file-too-large") {
-            toast.error("Tamaño limite es 20 MB");
-         } else {
-            toast.error("Error al subir imagen");
+            setFiles((prevFiles) => {
+               const updatedFiles = [...prevFiles, ...newFiles];
+               return updatedFiles;
+            });
          }
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, []);
+
+         if (rejectedFiles.length > 0) {
+            const errorCode = rejectedFiles[0].errors[0].code;
+
+            if (errorCode === "too-many-files") {
+               toast.error(
+                  `Máximo permitido: ${maxFiles} ${maxFiles === 1 ? "imagen" : "imágenes"}`,
+               );
+            } else if (errorCode === "file-too-large") {
+               toast.error("Tamaño limite es 20 MB");
+            } else {
+               toast.error("Error al subir imagen");
+            }
+         }
+         // eslint-disable-next-line react-hooks/exhaustive-deps
+      },
+      [files, maxFiles],
+   ); // Add files and maxFiles to dependencies
+
+   // Disable dropzone when max files reached
+   const isDisabled = maxFiles ? files.length >= maxFiles : false;
 
    const { getRootProps, getInputProps, isDragActive } = useDropzone({
       onDrop,
-      maxFiles: 10,
-      maxSize: 20 * 1024 * 1024, // 20 MB // USE THE LIMIT SIZE FROM YOUR CLOUD PROVIDER
+      maxFiles: maxFiles,
+      maxSize: 20 * 1024 * 1024, // 20 MB
       accept: {
          "image/png": [".png"],
          "image/jpeg": [".jpg", ".jpeg"],
       },
+      disabled: isDisabled, // Disable when max files reached
    });
 
    const removeFile = (fileId: string) => {
@@ -69,49 +90,68 @@ export const DropImage = ({ files, setFiles }: DropImageProps) => {
       <div className="space-y-4">
          <div
             {...getRootProps()}
-            className={`border-2 border-dashed p-4 text-center transition-all cursor-pointer ${
-               isDragActive
-                  ? "border-blue-400 bg-blue-50/50"
-                  : "border-gray-300 hover:border-blue-400"
+            className={`border-2 border-dashed p-4 text-center ${
+               isDisabled
+                  ? "cursor-not-allowed border-gray-200 bg-gray-50"
+                  : `cursor-pointer ${
+                       isDragActive
+                          ? "border-blue-400 bg-blue-50/50"
+                          : "border-gray-300 hover:border-blue-400"
+                    }`
             }`}
          >
             <input {...getInputProps()} />
-            <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground">
-               {isDragActive
-                  ? "Suelta las imágenes aquí"
-                  : "Arrastra imágenes o haz clic"}
+            <Upload
+               className={`w-8 h-8 mx-auto mb-2 ${
+                  isDisabled ? "text-gray-300" : "text-gray-400"
+               }`}
+            />
+            <p
+               className={`text-sm ${
+                  isDisabled ? "text-gray-400" : "text-muted-foreground"
+               }`}
+            >
+               {isDisabled
+                  ? `Máximo de ${maxFiles} ${maxFiles === 1 ? "imagen" : "imágenes"}`
+                  : isDragActive
+                    ? "Suelta las imágenes aquí"
+                    : "Arrastra imágenes o haz clic"}
             </p>
-            <p className="text-xs text-gray-500 mt-1">JPG, PNG (máx. 20MB)</p>
+            {!isDisabled && (
+               <p className="text-xs text-gray-500 mt-1">JPG, PNG (máx. 20MB)</p>
+            )}
          </div>
 
          {files.length > 0 && (
-            <div className="bg-accent p-4 space-y-4">
+            <div className="space-y-4 pt-1">
                {files.length > 0 && (
-                  <p className="text-sm text-green-600 font-semibold text-center -mt-1">
-                     Nueva imagen seleccionada:
-                  </p>
-               )}
+                  <>
+                     <p className="text-sm -mt-1 flex gap-2">
+                        <span className="font-semibold">Nueva imagen:</span>
+                        <span className="text-muted-foreground">
+                           (max {maxFiles || "∞"})
+                        </span>
+                     </p>
 
-               {files.length > 0 && (
-                  <div className="grid grid-cols-4 gap-2">
-                     {files.map((file) => (
-                        <div key={file.id} className="h-30 w-30 relative group">
-                           <img
-                              src={file.preview}
-                              alt={file.name}
-                              className="h-full w-full object-cover border-2 border-dashed border-green-500"
-                           />
-                           <button
-                              type="button"
-                              onClick={() => removeFile(file.id)}
-                              className="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 flex items-center justify-center text-xs hover:bg-red-400 opacity-0 group-hover:opacity-100 cursor-pointer"
-                           >
-                              <X size={18} />
-                           </button>
-                        </div>
-                     ))}
-                  </div>
+                     <div className="flex flex-row gap-3 flex-wrap justify-center bg-accent p-5">
+                        {files.map((file) => (
+                           <div key={file.id} className="h-30 w-30 relative group">
+                              <img
+                                 src={file.preview}
+                                 alt={file.name}
+                                 className="h-full w-full object-cover border-2 border-dashed border-green-500"
+                              />
+                              <button
+                                 type="button"
+                                 onClick={() => removeFile(file.id)}
+                                 className="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 flex items-center justify-center text-xs hover:bg-red-400 opacity-0 group-hover:opacity-100 cursor-pointer"
+                              >
+                                 <X size={18} />
+                              </button>
+                           </div>
+                        ))}
+                     </div>
+                  </>
                )}
             </div>
          )}

@@ -77,10 +77,6 @@ export const EditActivity = ({
       setIsExistingImageDeleted(true);
    };
 
-   const handleRestoreExistingImage = () => {
-      setIsExistingImageDeleted(false);
-   };
-
    const handleFormSubmit = async (data: ActivityFormData) => {
       await deleteAsset(activity.image);
       handleEditActivity(data, files);
@@ -166,57 +162,48 @@ export const EditActivity = ({
                         <FormItem>
                            <FormLabel>Subir Imagen</FormLabel>
                            <FormControl>
-                              <DropImage files={files} setFiles={setFiles} />
+                              <DropImage files={files} setFiles={setFiles} maxFiles={1} />
                            </FormControl>
                            <FormMessage />
                         </FormItem>
                      )}
                   />
 
-                  <div className="bg-accent">
-                     <div className="space-y-2">
-                        {files.length > 0 ? null : !isExistingImageDeleted &&
-                          activity.image ? (
-                           <div className="space-y-2 p-4">
-                              <p className="text-sm text-muted-foreground text-center -mt-1">
-                                 Imagen actual:
-                              </p>
-                              <div className="h-30 w-30 relative group">
-                                 <img
-                                    src={activity.image}
-                                    className="h-full w-full object-cover border-2 border-black/50"
-                                 />
-                                 <button
-                                    type="button"
-                                    onClick={handleMarkExistingImageForDeletion}
-                                    className="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 flex items-center justify-center text-xs hover:bg-red-400 opacity-0 group-hover:opacity-100 cursor-pointer"
-                                    title="Marcar para eliminar"
-                                 >
-                                    <X size={18} />
-                                 </button>
-                              </div>
-                           </div>
-                        ) : isExistingImageDeleted && !files.length ? (
-                           <div className="space-y-2 p-4">
-                              <p className="text-sm text-muted-foreground text-center -mt-1">
-                                 Imagen actual:
-                              </p>
-                              <div className="h-30 w-30 bg-red-50 border-2 border-dashed border-red-300 flex flex-col items-center justify-center text-red-600 text-sm">
-                                 <img
-                                    src={activity.image}
-                                    className="h-full w-full object-cover relative opacity-20"
-                                 />
-                                 <button
-                                    type="button"
-                                    onClick={handleRestoreExistingImage}
-                                    className="text-sm text-blue-600 hover:text-blue-800 underline font-semibold absolute"
-                                 >
-                                    Restaurar
-                                 </button>
-                              </div>
-                           </div>
-                        ) : null}
-                     </div>
+                  <div className="">
+                     {files.length > 0
+                        ? null
+                        : !isExistingImageDeleted &&
+                          activity.image && (
+                             <>
+                                <div className="space-y-4 pt-1">
+                                   <p className="text-sm -mt-1 flex gap-2">
+                                      <span className="font-semibold">
+                                         Imagen actual:
+                                      </span>
+                                      <span className="text-muted-foreground">
+                                         (max 1)
+                                      </span>
+                                   </p>
+
+                                   <div className="flex flex-row gap-3 flex-wrap justify-center bg-accent p-5">
+                                      <div className="h-30 w-30 relative group bg-accent">
+                                         <img
+                                            src={activity.image}
+                                            className="h-full w-full object-cover border-2 border-black/40"
+                                         />
+                                         <button
+                                            type="button"
+                                            onClick={handleMarkExistingImageForDeletion}
+                                            className="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 flex items-center justify-center text-xs hover:bg-red-400 opacity-0 group-hover:opacity-100 cursor-pointer"
+                                            title="Marcar para eliminar"
+                                         >
+                                            <X size={18} />
+                                         </button>
+                                      </div>
+                                   </div>
+                                </div>
+                             </>
+                          )}
                   </div>
 
                   <FormField
