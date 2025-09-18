@@ -1,21 +1,17 @@
 import React, { useState } from "react";
-import {
-   Calendar,
-   Edit3,
-   LogOut,
-   UserPenIcon,
-} from "lucide-react";
+import { BriefcaseBusiness, Calendar, Edit3, LogOut, UserPenIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { Container } from "@/components/layout/Container";
 import { ActivitySection } from "@/components/pages/dashboard/ActivitySection";
 import { ArtworkSection } from "@/components/pages/dashboard/ArtworkSection";
 import { PersonalSection } from "@/components/pages/dashboard/PersonalSection";
+import { PortfolioSection } from "@/components/pages/dashboard/PortfolioSection";
 
 export const Dashboard: React.FC = () => {
-   const [activeTab, setActiveTab] = useState<"activities" | "artworks" | "personal">(
-      "activities",
-   );
+   const [activeTab, setActiveTab] = useState<
+      "activities" | "artworks" | "portfolio" | "personal"
+   >("activities");
    const { logout } = useAuthStore();
 
    return (
@@ -62,6 +58,19 @@ export const Dashboard: React.FC = () => {
                      </div>
                   </button>
                   <button
+                     onClick={() => setActiveTab("portfolio")}
+                     className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                        activeTab === "portfolio"
+                           ? "border-primary text-primary"
+                           : "border-transparent text-muted-foreground hover:text-foreground"
+                     }`}
+                  >
+                     <div className="flex items-center space-x-2">
+                        <BriefcaseBusiness className="w-5 h-5" />
+                        <span>Portfolio</span>
+                     </div>
+                  </button>
+                  <button
                      onClick={() => setActiveTab("personal")}
                      className={`py-4 px-1 border-b-2 font-medium text-sm ${
                         activeTab === "personal"
@@ -81,6 +90,7 @@ export const Dashboard: React.FC = () => {
          <Container size="large">
             {activeTab === "activities" && <ActivitySection />}
             {activeTab === "artworks" && <ArtworkSection />}
+            {activeTab === "portfolio" && <PortfolioSection />}
             {activeTab === "personal" && <PersonalSection />}
          </Container>
       </div>
