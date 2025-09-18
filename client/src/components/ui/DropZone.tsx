@@ -96,18 +96,18 @@ export const DropImage = ({ files, setFiles }: DropImageProps) => {
                {files.length > 0 && (
                   <div className="grid grid-cols-4 gap-2">
                      {files.map((file) => (
-                        <div key={file.id} className="h-30 w-30 relative">
+                        <div key={file.id} className="h-30 w-30 relative group">
                            <img
                               src={file.preview}
                               alt={file.name}
-                              className="h-full w-full object-cover border-2 border-black/50"
+                              className="h-full w-full object-cover border-2 border-dashed border-green-500"
                            />
                            <button
                               type="button"
                               onClick={() => removeFile(file.id)}
-                              className="absolute -top-1 -right-1 bg-red-500 text-white w-5 h-5 flex items-center justify-center text-xs"
+                              className="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 flex items-center justify-center text-xs hover:bg-red-400 opacity-0 group-hover:opacity-100 cursor-pointer"
                            >
-                              <X size={12} />
+                              <X size={18} />
                            </button>
                         </div>
                      ))}

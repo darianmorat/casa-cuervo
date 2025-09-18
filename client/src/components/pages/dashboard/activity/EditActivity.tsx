@@ -181,7 +181,7 @@ export const EditActivity = ({
                               <p className="text-sm text-muted-foreground text-center -mt-1">
                                  Imagen actual:
                               </p>
-                              <div className="h-30 w-30 relative">
+                              <div className="h-30 w-30 relative group">
                                  <img
                                     src={activity.image}
                                     className="h-full w-full object-cover border-2 border-black/50"
@@ -189,10 +189,10 @@ export const EditActivity = ({
                                  <button
                                     type="button"
                                     onClick={handleMarkExistingImageForDeletion}
-                                    className="absolute -top-1 -right-1 bg-red-500 text-white w-5 h-5 flex items-center justify-center text-xs hover:bg-red-400"
+                                    className="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 flex items-center justify-center text-xs hover:bg-red-400 opacity-0 group-hover:opacity-100 cursor-pointer"
                                     title="Marcar para eliminar"
                                  >
-                                    <X size={12} />
+                                    <X size={18} />
                                  </button>
                               </div>
                            </div>
@@ -201,7 +201,7 @@ export const EditActivity = ({
                               <p className="text-sm text-muted-foreground text-center -mt-1">
                                  Imagen actual:
                               </p>
-                              <div className="h-30 w-30 bg-red-50 border-2 border-dashed border-red-300 flex flex-col items-center justify-center text-red-600 text-sm p-1">
+                              <div className="h-30 w-30 bg-red-50 border-2 border-dashed border-red-300 flex flex-col items-center justify-center text-red-600 text-sm">
                                  <img
                                     src={activity.image}
                                     className="h-full w-full object-cover relative opacity-20"
