@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm, type UseFormReturn } from "react-hook-form";
 import { X, Save } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
-import { activitySchema } from "./ActivitySchema";
+import { activitySchema, type ActivityFormData } from "./ActivitySchema";
 import { useEffect, useState } from "react";
 import { DropImage } from "@/components/ui/DropZone";
 import { useActivityStore } from "@/stores/useActivityStore";
@@ -22,16 +22,6 @@ interface FileWithPreview extends File {
    preview: string;
    id: string;
 }
-
-type ActivityFormData = {
-   title: string;
-   date: string;
-   time: string;
-   image: string;
-   description: string;
-   spots: string;
-   phone: string;
-};
 
 interface CreateActivityProps {
    activity: ActivityFormData;

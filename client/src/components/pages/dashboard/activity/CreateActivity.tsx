@@ -14,21 +14,12 @@ import { X, Save } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { DropImage } from "@/components/ui/DropZone";
 import { useEffect, useState } from "react";
+import type { ActivityFormData } from "./ActivitySchema";
 
 interface FileWithPreview extends File {
    preview: string;
    id: string;
 }
-
-type ActivityFormData = {
-   title: string;
-   date: string;
-   time: string;
-   image: string;
-   description: string;
-   spots: string;
-   phone: string;
-};
 
 interface CreateActivityProps {
    activityForm: UseFormReturn<ActivityFormData>;

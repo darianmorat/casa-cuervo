@@ -41,7 +41,7 @@ export const ActivitySection = () => {
                                     <img
                                        src={activity.image}
                                        alt={activity.title}
-                                       className="w-full h-55 object-cover group-hover:scale-105 transition-transform duration-500"
+                                       className="w-full h-60 object-cover group-hover:scale-105 transition-transform duration-500"
                                     />
                                     <Fullscreen
                                        size={25}

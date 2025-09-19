@@ -15,3 +15,5 @@ export const activitySchema = z.object({
       .string()
       .regex(/^\d{10}$/, { message: "Teléfono debe tener exactamente 10 dígitos" }),
 });
+
+export type ActivityFormData = z.infer<typeof activitySchema>;
