@@ -19,6 +19,11 @@ import { DeleteArtwork } from "./artwork/DeleteArtwork";
 import { EditArtwork } from "./artwork/EditArtwork";
 import { artworkSchema, type ArtworkFormData } from "./artwork/ArtworkSchema";
 
+interface FileWithPreview extends File {
+   preview: string;
+   id: string;
+}
+
 type ShowFormState = {
    open: boolean;
    for: string;
@@ -55,15 +60,21 @@ export const ArtworkSection = () => {
       },
    });
 
-   const handleCreateArtwork = (data: z.infer<typeof artworkSchema>) => {
-      createArtwork(data);
+   const handleCreateArtwork = (
+      data: z.infer<typeof artworkSchema>,
+      files: FileWithPreview[],
+   ) => {
+      createArtwork(data, files);
       closeForm();
    };
 
-   const handleEditArtwork = (data: z.infer<typeof artworkSchema>) => {
+   const handleEditArtwork = (
+      data: z.infer<typeof artworkSchema>,
+      files: FileWithPreview[],
+   ) => {
       if (!showForm.id) return;
 
-      editArtwork(data, showForm.id);
+      editArtwork(data, files, showForm.id);
       closeForm();
    };
 
@@ -127,7 +138,7 @@ export const ArtworkSection = () => {
                                     <img
                                        src={artwork.image}
                                        alt={artwork.title}
-                                       className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+                                       className="w-full h-90 object-cover group-hover:scale-105 transition-transform duration-500"
                                     />
                                     <Fullscreen
                                        size={25}

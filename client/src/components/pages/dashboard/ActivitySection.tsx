@@ -17,22 +17,12 @@ import { useForm } from "react-hook-form";
 import { CreateActivity } from "./activity/CreateActivity";
 import { DeleteActivity } from "./activity/DeleteActivity";
 import { EditActivity } from "./activity/EditActivity";
-import { activitySchema } from "./activity/ActivitySchema";
+import { activitySchema, type ActivityFormData } from "./activity/ActivitySchema";
 
 interface FileWithPreview extends File {
    preview: string;
    id: string;
 }
-
-type ActivityFormData = {
-   title: string;
-   date: string;
-   time: string;
-   image: string;
-   description: string;
-   spots: string;
-   phone: string;
-};
 
 type ShowFormState = {
    open: boolean;

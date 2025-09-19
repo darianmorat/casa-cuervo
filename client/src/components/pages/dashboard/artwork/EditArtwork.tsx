@@ -22,11 +22,19 @@ import { Save, X } from "lucide-react";
 import { artworkSchema, type ArtworkFormData } from "./ArtworkSchema";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { useActivityStore } from "@/stores/useActivityStore";
+import { useEffect, useState } from "react";
+import { DropImage } from "@/components/ui/DropZone";
+
+interface FileWithPreview extends File {
+   preview: string;
+   id: string;
+}
 
 interface EditArtworkProps {
    artwork: ArtworkFormData;
    artworkForm: UseFormReturn<ArtworkFormData>;
-   handleEditArtwork: (data: ArtworkFormData) => void;
+   handleEditArtwork: (data: ArtworkFormData, files: FileWithPreview[]) => void;
    closeForm: () => void;
 }
 
@@ -35,6 +43,10 @@ export const EditArtwork = ({
    handleEditArtwork,
    closeForm,
 }: EditArtworkProps) => {
+   const [files, setFiles] = useState<FileWithPreview[]>([]);
+   const [isExistingImageDeleted, setIsExistingImageDeleted] = useState(false);
+   const { deleteAsset } = useActivityStore();
+
    const artworkForm = useForm({
       resolver: zodResolver(artworkSchema),
       defaultValues: {
@@ -48,6 +60,32 @@ export const EditArtwork = ({
          available: artwork.available,
       },
    });
+
+   useEffect(() => {
+      if (files.length > 0) {
+         artworkForm.setValue("image", files[0].name);
+         artworkForm.clearErrors("image");
+      } else if (isExistingImageDeleted) {
+         artworkForm.setValue("image", "");
+      } else {
+         artworkForm.setValue("image", artwork.image);
+      }
+   }, [files, isExistingImageDeleted, artworkForm, artwork.image]);
+
+   const handleMarkExistingImageForDeletion = () => {
+      setIsExistingImageDeleted(true);
+   };
+
+   const handleFormSubmit = async (data: ArtworkFormData) => {
+      await deleteAsset(artwork.image);
+      handleEditArtwork(data, files);
+   };
+
+   const handleCancel = () => {
+      setFiles([]);
+      setIsExistingImageDeleted(false);
+      closeForm();
+   };
 
    return (
       <Modal onClose={closeForm} orientation="right">
@@ -65,7 +103,7 @@ export const EditArtwork = ({
 
             <Form {...artworkForm}>
                <form
-                  onSubmit={artworkForm.handleSubmit(handleEditArtwork)}
+                  onSubmit={artworkForm.handleSubmit(handleFormSubmit)}
                   className="space-y-4"
                >
                   <div className="bg-accent/50">
@@ -138,6 +176,56 @@ export const EditArtwork = ({
 
                   <FormField
                      control={artworkForm.control}
+                     name="image"
+                     render={() => (
+                        <FormItem>
+                           <FormLabel>Subir Imagen</FormLabel>
+                           <FormControl>
+                              <DropImage files={files} setFiles={setFiles} maxFiles={1} />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+                  <div className="">
+                     {files.length > 0
+                        ? null
+                        : !isExistingImageDeleted &&
+                          artwork.image && (
+                             <>
+                                <div className="space-y-4 pt-1">
+                                   <p className="text-sm -mt-1 flex gap-2">
+                                      <span className="font-semibold">
+                                         Imagen actual:
+                                      </span>
+                                      <span className="text-muted-foreground">
+                                         (max 1)
+                                      </span>
+                                   </p>
+
+                                   <div className="flex flex-row gap-3 flex-wrap justify-center bg-accent p-5">
+                                      <div className="h-30 w-30 relative group bg-accent">
+                                         <img
+                                            src={artwork.image}
+                                            className="h-full w-full object-cover border-2 border-black/40"
+                                         />
+                                         <button
+                                            type="button"
+                                            onClick={handleMarkExistingImageForDeletion}
+                                            className="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 flex items-center justify-center text-xs hover:bg-red-400 opacity-0 group-hover:opacity-100 cursor-pointer"
+                                            title="Marcar para eliminar"
+                                         >
+                                            <X size={18} />
+                                         </button>
+                                      </div>
+                                   </div>
+                                </div>
+                             </>
+                          )}
+                  </div>
+
+                  <FormField
+                     control={artworkForm.control}
                      name="technique"
                      render={({ field }) => (
                         <FormItem>
@@ -176,7 +264,7 @@ export const EditArtwork = ({
                            <FormItem>
                               <FormLabel>Tamaño</FormLabel>
                               <FormControl>
-                                 <Input {...field} placeholder="60x80cm" />
+                                 <Input {...field} placeholder="60x80 cm" />
                               </FormControl>
                               <FormMessage />
                            </FormItem>
@@ -198,27 +286,13 @@ export const EditArtwork = ({
                      )}
                   />
 
-                  <FormField
-                     control={artworkForm.control}
-                     name="image"
-                     render={({ field }) => (
-                        <FormItem>
-                           <FormLabel>URL de Imagen</FormLabel>
-                           <FormControl>
-                              <Input {...field} placeholder="https://..." type="url" />
-                           </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
-
                   <div className="flex gap-2 pt-4">
                      <Button type="submit" className="flex-1">
                         <Save className="w-4 h-4 mr-2" /> Guardar
                      </Button>
                      <Button
                         type="button"
-                        onClick={closeForm}
+                        onClick={handleCancel}
                         variant={"outline"}
                         className="flex-1"
                      >

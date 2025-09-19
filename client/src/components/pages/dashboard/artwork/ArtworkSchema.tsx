@@ -7,7 +7,7 @@ export const artworkSchema = z.object({
    price: z.string().min(1, { message: "Precio es requerido" }),
    size: z.string().min(1, { message: "Tamaño es requerido" }),
    year: z.string().min(1, { message: "Año es requerido" }),
-   image: z.url({ message: "URL de imagen inválida" }),
+   image: z.string().nonempty({ message: "Imagen requerida" }),
    available: z.boolean(),
 });
 

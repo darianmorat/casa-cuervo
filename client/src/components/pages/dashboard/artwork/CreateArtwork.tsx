@@ -21,10 +21,17 @@ import { Save, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import type { ArtworkFormData } from "./ArtworkSchema";
+import { DropImage } from "@/components/ui/DropZone";
+import { useEffect, useState } from "react";
+
+interface FileWithPreview extends File {
+   preview: string;
+   id: string;
+}
 
 interface CreateArtworkProps {
    artworkForm: UseFormReturn<ArtworkFormData>;
-   handleCreateArtwork: (data: ArtworkFormData) => void;
+   handleCreateArtwork: (data: ArtworkFormData, files: FileWithPreview[]) => void;
    closeForm: () => void;
 }
 
@@ -33,6 +40,18 @@ export const CreateArtwork = ({
    handleCreateArtwork,
    closeForm,
 }: CreateArtworkProps) => {
+   const [files, setFiles] = useState<FileWithPreview[]>([]);
+
+   // Add useEffect to update form field when files change
+   useEffect(() => {
+      if (files.length > 0) {
+         artworkForm.setValue("image", files[0].name);
+         artworkForm.clearErrors("image");
+      } else {
+         artworkForm.setValue("image", "");
+      }
+   }, [files, artworkForm]);
+
    return (
       <Modal onClose={closeForm} orientation="right">
          <div className="relative bg-background dark:bg-card p-6 w-full max-w-lg overflow-y-scroll">
@@ -49,7 +68,9 @@ export const CreateArtwork = ({
 
             <Form {...artworkForm}>
                <form
-                  onSubmit={artworkForm.handleSubmit(handleCreateArtwork)}
+                  onSubmit={artworkForm.handleSubmit((data) => {
+                     handleCreateArtwork(data, files);
+                  })}
                   className="space-y-4"
                >
                   <div className="bg-accent/50">
@@ -122,6 +143,21 @@ export const CreateArtwork = ({
 
                   <FormField
                      control={artworkForm.control}
+                     name="image"
+                     render={() => (
+                        <FormItem>
+                           <FormLabel>Subir Imagen</FormLabel>
+                           <FormControl>
+                              <DropImage files={files} setFiles={setFiles} maxFiles={1} />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+
+
+                  <FormField
+                     control={artworkForm.control}
                      name="technique"
                      render={({ field }) => (
                         <FormItem>
@@ -160,7 +196,7 @@ export const CreateArtwork = ({
                            <FormItem>
                               <FormLabel>Tamaño</FormLabel>
                               <FormControl>
-                                 <Input {...field} placeholder="60x80cm" />
+                                 <Input {...field} placeholder="60x80 cm" />
                               </FormControl>
                               <FormMessage />
                            </FormItem>
@@ -176,20 +212,6 @@ export const CreateArtwork = ({
                            <FormLabel>Año</FormLabel>
                            <FormControl>
                               <Input {...field} placeholder="2024" />
-                           </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
-
-                  <FormField
-                     control={artworkForm.control}
-                     name="image"
-                     render={({ field }) => (
-                        <FormItem>
-                           <FormLabel>URL de Imagen</FormLabel>
-                           <FormControl>
-                              <Input {...field} placeholder="https://..." type="url" />
                            </FormControl>
                            <FormMessage />
                         </FormItem>
