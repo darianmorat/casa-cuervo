@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { BriefcaseBusiness, Calendar, Edit3, LogOut, UserPenIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -7,12 +7,31 @@ import { ActivitySection } from "@/components/pages/dashboard/ActivitySection";
 import { ArtworkSection } from "@/components/pages/dashboard/ArtworkSection";
 import { PersonalSection } from "@/components/pages/dashboard/PersonalSection";
 import { PortfolioSection } from "@/components/pages/dashboard/PortfolioSection";
+import { useNavigate, useParams } from "react-router-dom";
 
 export const Dashboard: React.FC = () => {
-   const [activeTab, setActiveTab] = useState<
-      "activities" | "artworks" | "portfolio" | "personal"
-   >("activities");
+   const navigate = useNavigate();
+   const { tab } = useParams<{ tab?: string }>();
    const { logout } = useAuthStore();
+
+   const getCurrentTab = (): "activities" | "artworks" | "portfolio" | "personal" => {
+      if (tab === "artworks") return "artworks";
+      if (tab === "portfolio") return "portfolio";
+      if (tab === "personal") return "personal";
+      return "activities";
+   };
+
+   const activeTab = getCurrentTab();
+
+   const handleTabChange = (
+      newTab: "activities" | "artworks" | "portfolio" | "personal",
+   ) => {
+      if (newTab === "activities") {
+         navigate("/dashboard");
+      } else {
+         navigate(`/dashboard/${newTab}`);
+      }
+   };
 
    return (
       <div className="min-h-screen bg-background">
@@ -32,7 +51,7 @@ export const Dashboard: React.FC = () => {
             <Container size="large" className="flex justify-between items-center py-0">
                <nav className="flex space-x-8">
                   <button
-                     onClick={() => setActiveTab("activities")}
+                     onClick={() => handleTabChange("activities")}
                      className={`py-4 px-1 border-b-2 font-medium text-sm ${
                         activeTab === "activities"
                            ? "border-primary text-primary"
@@ -45,7 +64,7 @@ export const Dashboard: React.FC = () => {
                      </div>
                   </button>
                   <button
-                     onClick={() => setActiveTab("artworks")}
+                     onClick={() => handleTabChange("artworks")}
                      className={`py-4 px-1 border-b-2 font-medium text-sm ${
                         activeTab === "artworks"
                            ? "border-primary text-primary"
@@ -58,7 +77,7 @@ export const Dashboard: React.FC = () => {
                      </div>
                   </button>
                   <button
-                     onClick={() => setActiveTab("portfolio")}
+                     onClick={() => handleTabChange("portfolio")}
                      className={`py-4 px-1 border-b-2 font-medium text-sm ${
                         activeTab === "portfolio"
                            ? "border-primary text-primary"
@@ -71,7 +90,7 @@ export const Dashboard: React.FC = () => {
                      </div>
                   </button>
                   <button
-                     onClick={() => setActiveTab("personal")}
+                     onClick={() => handleTabChange("personal")}
                      className={`py-4 px-1 border-b-2 font-medium text-sm ${
                         activeTab === "personal"
                            ? "border-primary text-primary"

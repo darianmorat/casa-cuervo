@@ -1,12 +1,36 @@
 import { Container } from "@/components/layout/Container";
 import { useArtworkStore } from "@/stores/useArtworkStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { Fullscreen } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 export const Portfolio = () => {
-   const [activeSection, setActiveSection] = useState("gallery");
    const { artworks, getArtworks } = useArtworkStore();
    const [categories, setCategories] = useState<string[]>([]);
+
+   const { user } = useAuthStore();
+   const phone = user?.phone;
+
+   const { tab } = useParams<{ tab?: string }>();
+
+   const getCurrentTab = (): "gallery" | "acerca" | "contacto" | "obras" => {
+      if (tab === "acerca") return "acerca";
+      if (tab === "contacto") return "contacto";
+      if (tab === "obras") return "obras";
+      return "gallery";
+   };
+
+   const activeTab = getCurrentTab();
+   const navigate = useNavigate();
+
+   const handleTabChange = (newTab: "gallery" | "acerca" | "contacto" | "obras") => {
+      if (newTab === "gallery") {
+         navigate("/portfolio");
+      } else {
+         navigate(`/portfolio/${newTab}`);
+      }
+   };
 
    const galleryImages = [
       {
@@ -63,21 +87,21 @@ export const Portfolio = () => {
 
          <div className="flex justify-center gap-8 md:gap-16 mb-12 flex-wrap">
             <button
-               onClick={() => setActiveSection("acerca")}
+               onClick={() => handleTabChange("acerca")}
                className="text-sm tracking-[0.3em] hover:text-blue-400 transition-all duration-300 relative group px-2 py-1"
             >
                ACERCA DE
                <div className="absolute -bottom-1 left-0 w-0 h-px bg-gradient-to-r from-blue-400 to-purple-400 group-hover:w-full transition-all duration-300" />
             </button>
             <button
-               onClick={() => setActiveSection("contacto")}
+               onClick={() => handleTabChange("contacto")}
                className="text-sm tracking-[0.3em] hover:text-blue-400 transition-all duration-300 relative group px-2 py-1"
             >
                CONTACTO
                <div className="absolute -bottom-1 left-0 w-0 h-px bg-gradient-to-r from-blue-400 to-purple-400 group-hover:w-full transition-all duration-300" />
             </button>
             <button
-               onClick={() => setActiveSection("obras")}
+               onClick={() => handleTabChange("obras")}
                className="text-sm tracking-[0.3em] hover:text-blue-400 transition-all duration-300 relative group px-2 py-1"
             >
                OBRAS
@@ -103,7 +127,7 @@ export const Portfolio = () => {
    const renderAcerca = () => (
       <div className="animate-in fade-in duration-500">
          <button
-            onClick={() => setActiveSection("gallery")}
+            onClick={() => handleTabChange("gallery")}
             className="text-sm tracking-widest hover:text-blue-400 transition-all duration-300 mb-8 flex items-center gap-2 group"
          >
             <span className="group-hover:-translate-x-1 transition-transform duration-300">
@@ -192,7 +216,7 @@ export const Portfolio = () => {
    const renderContacto = () => (
       <div className="animate-in fade-in duration-500">
          <button
-            onClick={() => setActiveSection("gallery")}
+            onClick={() => handleTabChange("gallery")}
             className="text-sm tracking-widest hover:text-blue-400 transition-all duration-300 mb-8 flex items-center gap-2 group"
          >
             <span className="group-hover:-translate-x-1 transition-transform duration-300">
@@ -254,7 +278,7 @@ export const Portfolio = () => {
    const renderObras = () => (
       <div className="animate-in fade-in duration-500">
          <button
-            onClick={() => setActiveSection("gallery")}
+            onClick={() => handleTabChange("gallery")}
             className="text-sm tracking-widest hover:text-blue-400 transition-all duration-300 mb-8 flex items-center gap-2 group"
          >
             <span className="group-hover:-translate-x-1 transition-transform duration-300">
@@ -286,7 +310,6 @@ export const Portfolio = () => {
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                            {categoryArtworks.map((artwork) => {
-                              const phone = 3176980920;
                               const message = `Hola, me gustaría comprar la obra "${artwork.title}"`;
                               const url = `https://wa.me/57${phone}?text=${encodeURIComponent(message)}`;
 
@@ -366,11 +389,13 @@ export const Portfolio = () => {
 
    return (
       <div className="relative min-h-screen bg-gradient-to-br from-background via-background to-muted/20 text-foreground flex flex-col">
+         {/* PENDING: */}
+         {/* make the renders its own file, to be more modular */}
          <Container className="py-16 flex-1 relative z-10">
-            {activeSection === "gallery" && renderGallery()}
-            {activeSection === "acerca" && renderAcerca()}
-            {activeSection === "contacto" && renderContacto()}
-            {activeSection === "obras" && renderObras()}
+            {activeTab === "gallery" && renderGallery()}
+            {activeTab === "acerca" && renderAcerca()}
+            {activeTab === "contacto" && renderContacto()}
+            {activeTab === "obras" && renderObras()}
          </Container>
 
          <footer className="border-t border-foreground/10 py-8 mt-auto relative z-10 bg-muted/20 backdrop-blur-sm">
