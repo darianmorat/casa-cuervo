@@ -27,7 +27,7 @@ export const DropImage = ({ files, setFiles, maxFiles }: DropImageProps) => {
                toast.error(
                   `Máximo permitido: ${maxFiles} ${maxFiles === 1 ? "imagen" : "imágenes"}`,
                );
-               return; // Don't add any files
+               return;
             }
 
             const newFiles = acceptedFiles.map(
@@ -57,12 +57,11 @@ export const DropImage = ({ files, setFiles, maxFiles }: DropImageProps) => {
                toast.error("Error al subir imagen");
             }
          }
-         // eslint-disable-next-line react-hooks/exhaustive-deps
       },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       [files, maxFiles],
-   ); // Add files and maxFiles to dependencies
+   );
 
-   // Disable dropzone when max files reached
    const isDisabled = maxFiles ? files.length >= maxFiles : false;
 
    const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -73,7 +72,7 @@ export const DropImage = ({ files, setFiles, maxFiles }: DropImageProps) => {
          "image/png": [".png"],
          "image/jpeg": [".jpg", ".jpeg"],
       },
-      disabled: isDisabled, // Disable when max files reached
+      disabled: isDisabled,
    });
 
    const removeFile = (fileId: string) => {
