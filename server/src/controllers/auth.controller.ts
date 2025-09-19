@@ -80,3 +80,23 @@ export const verify = async (req: AuthRequest, res: Response) => {
       user: user,
    });
 };
+
+export const updatePhone = async (req: AuthRequest, res: Response) => {
+   try {
+      const { userId } = req.user;
+      const { phone } = req.body;
+
+      const updatedUser = await userService.updatePhone(phone, userId);
+
+      res.status(200).json({
+         success: true,
+         message: "Numero actualizado",
+         user: updatedUser,
+      });
+   } catch {
+      res.status(500).json({
+         success: false,
+         message: "server error",
+      });
+   }
+};

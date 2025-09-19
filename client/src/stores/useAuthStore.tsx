@@ -6,6 +6,7 @@ type User = {
    id: string;
    username: string;
    email: string;
+   phone: string;
 };
 
 type Store = {
@@ -16,6 +17,7 @@ type Store = {
    authenticate: (email: string, password: string) => Promise<void>;
    logout: () => Promise<void>;
    checkAuth: () => Promise<void>;
+   updateUserPhone: (phone: string) => Promise<void>;
 };
 
 export const useAuthStore = create<Store>((set, get) => ({
@@ -77,6 +79,27 @@ export const useAuthStore = create<Store>((set, get) => ({
          set({ isAuth: false, user: null });
       } finally {
          set({ checkingAuth: false });
+      }
+   },
+
+   updateUserPhone: async (phone) => {
+      set({ isLoading: true });
+      try {
+         const body = {
+            phone: phone,
+         };
+
+         const res = await api.post("/auth/phone", body);
+
+         if (res.data.success) {
+            get().checkAuth()
+            set({ user: res.data.user });
+            toast.info(res.data.message);
+         }
+      } catch (error) {
+         toast.error(error.response.data.message);
+      } finally {
+         set({ isLoading: false });
       }
    },
 }));

@@ -42,15 +42,19 @@ function App() {
                   <Route path="/video" element={<Video />} />
                   <Route path="/casa-cuervo" element={<CasaCuervo />} />
                   <Route path="/portfolio" element={<Portfolio />} />
+                  <Route path="/portfolio/:tab?" element={<Portfolio />} />
                   <Route path="*" element={<NotFound />} />
 
                   <Route
                      path="/secret"
                      element={isAuth ? <Navigate to="/dashboard" /> : <Secret />}
                   />
-
                   <Route
                      path="/dashboard"
+                     element={isAuth ? <Dashboard /> : <Navigate to="/secret" />}
+                  />
+                  <Route
+                     path="/dashboard/:tab?"
                      element={isAuth ? <Dashboard /> : <Navigate to="/secret" />}
                   />
                </Route>

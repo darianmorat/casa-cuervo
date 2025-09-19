@@ -2,6 +2,7 @@ CREATE TABLE "users" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"email" varchar(255) NOT NULL,
 	"password" varchar(60) NOT NULL,
+	"phone" varchar(60) NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
@@ -27,5 +28,15 @@ CREATE TABLE "artworks" (
 	"size" varchar(255) NOT NULL,
 	"year" varchar(255) NOT NULL,
 	"image" varchar(255) NOT NULL,
+	"available" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "asset" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"public_id" text NOT NULL,
+	"media_url" text NOT NULL,
+	"resource_type" text NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "asset_public_id_unique" UNIQUE("public_id")
 );

@@ -21,4 +21,14 @@ export const userService = {
 
       return result;
    },
+
+   updatePhone: async (phone: string, id: string) => {
+      const result = await db
+         .update(users)
+         .set({ phone: phone })
+         .where(eq(users.id, id))
+         .returning();
+
+      return result;
+   },
 };
