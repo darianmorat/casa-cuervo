@@ -2,7 +2,7 @@
 
 Official website for **Casa Cuervo**
 
-> [Visit Live Website](https://casa-cuervo.vercel.app)
+> [Visit Live Website](https://www.lacuervo.com)
 
 ## Features
 
