@@ -42,29 +42,6 @@ export const Portfolio = () => {
       }
    };
 
-   // const images = [
-   //    {
-   //       id: 1,
-   //       src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468920/473368825_18474682114024094_7048284083203549906_n._siycn6.jpg",
-   //       alt: "Pintura 1",
-   //    },
-   //    {
-   //       id: 2,
-   //       src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468919/458383962_18449743495024094_3853524860249220110_n._gc6dyt.jpg",
-   //       alt: "Pintura 2",
-   //    },
-   //    {
-   //       id: 3,
-   //       src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468919/448275728_18434292652024094_4885150987941140735_n._ni3cin.jpg",
-   //       alt: "Pintura 3",
-   //    },
-   //    {
-   //       id: 4,
-   //       src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468919/448272816_18434292718024094_2129371369259876850_n._cbyhop.jpg",
-   //       alt: "Pintura 4",
-   //    },
-   // ];
-
    useEffect(() => {
       getArtworks();
       getImages();
