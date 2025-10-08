@@ -1,6 +1,5 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { Default } from "./layouts/Default";
-import { Home } from "./pages/Home";
 import { Video } from "./pages/Video";
 import { CasaCuervo } from "./pages/CasaCuervo";
 import { Portfolio } from "./pages/Portfolio";
@@ -38,11 +37,11 @@ function App() {
          <Wrapper>
             <Routes>
                <Route element={<Default />}>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/video" element={<Video />} />
+                  <Route path="/" element={<Portfolio />} />
+                  <Route path="/:tab?" element={<Portfolio />} />
                   <Route path="/casa-cuervo" element={<CasaCuervo />} />
-                  <Route path="/portfolio" element={<Portfolio />} />
-                  <Route path="/portfolio/:tab?" element={<Portfolio />} />
+                  <Route path="/video" element={<Video />} />
+
                   <Route path="*" element={<NotFound />} />
 
                   <Route
