@@ -13,9 +13,15 @@ type DropImageProps = {
    files: FileWithPreview[];
    setFiles: React.Dispatch<React.SetStateAction<FileWithPreview[]>>;
    maxFiles?: number;
+   customTailwind?: string;
 };
 
-export const DropImage = ({ files, setFiles, maxFiles }: DropImageProps) => {
+export const DropImage = ({
+   files,
+   setFiles,
+   maxFiles,
+   customTailwind,
+}: DropImageProps) => {
    const onDrop = useCallback(
       (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
          if (acceptedFiles && acceptedFiles.length > 0) {
@@ -86,10 +92,10 @@ export const DropImage = ({ files, setFiles, maxFiles }: DropImageProps) => {
    }, [files]);
 
    return (
-      <div className="space-y-4">
+      <div className={`space-y-4 ${customTailwind}`}>
          <div
             {...getRootProps()}
-            className={`border-2 border-dashed p-4 text-center ${
+            className={`border-2 border-dashed p-4 text-center ${customTailwind} ${
                isDisabled
                   ? "cursor-not-allowed border-gray-200 bg-gray-50"
                   : `cursor-pointer ${

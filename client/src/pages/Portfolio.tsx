@@ -2,14 +2,15 @@ import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/button";
 import { useArtworkStore } from "@/stores/useArtworkStore";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { Fullscreen } from "lucide-react";
+import { usePortfolioStore } from "@/stores/usePortfolioStore";
+import { ExternalLink, Fullscreen } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export const Portfolio = () => {
    const { artworks, getArtworks } = useArtworkStore();
    const [categories, setCategories] = useState<string[]>([]);
-
+   const { images, getImages } = usePortfolioStore();
    const { getPhone } = useAuthStore();
 
    const handleBuyBtn = async (artTitle: string) => {
@@ -41,57 +42,59 @@ export const Portfolio = () => {
       }
    };
 
-   const galleryImages = [
-      {
-         id: 1,
-         src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468920/473368825_18474682114024094_7048284083203549906_n._siycn6.jpg",
-         alt: "Pintura 1",
-      },
-      {
-         id: 2,
-         src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468919/458383962_18449743495024094_3853524860249220110_n._gc6dyt.jpg",
-         alt: "Pintura 2",
-      },
-      {
-         id: 3,
-         src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468919/448275728_18434292652024094_4885150987941140735_n._ni3cin.jpg",
-         alt: "Pintura 3",
-      },
-      {
-         id: 4,
-         src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468919/448272816_18434292718024094_2129371369259876850_n._cbyhop.jpg",
-         alt: "Pintura 4",
-      },
-   ];
+   // const images = [
+   //    {
+   //       id: 1,
+   //       src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468920/473368825_18474682114024094_7048284083203549906_n._siycn6.jpg",
+   //       alt: "Pintura 1",
+   //    },
+   //    {
+   //       id: 2,
+   //       src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468919/458383962_18449743495024094_3853524860249220110_n._gc6dyt.jpg",
+   //       alt: "Pintura 2",
+   //    },
+   //    {
+   //       id: 3,
+   //       src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468919/448275728_18434292652024094_4885150987941140735_n._ni3cin.jpg",
+   //       alt: "Pintura 3",
+   //    },
+   //    {
+   //       id: 4,
+   //       src: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468919/448272816_18434292718024094_2129371369259876850_n._cbyhop.jpg",
+   //       alt: "Pintura 4",
+   //    },
+   // ];
 
    useEffect(() => {
       getArtworks();
+      getImages();
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
 
    const renderGallery = () => (
       <>
          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mb-16">
-            {galleryImages.map((image, index) => (
-               <div
-                  key={image.id}
-                  className={`${index % 2 === 0 ? "mt-8" : ""} group cursor-pointer`}
-               >
-                  <div className="relative overflow-hidden bg-muted/10 aspect-[3/4] shadow-lg hover:shadow-2xl transition-all duration-500 group">
-                     <img
-                        src={image.src}
-                        alt={image.alt}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                     />
-                     <Fullscreen
-                        size={25}
-                        onClick={() => window.open(image.src, "_blank")}
-                        className="absolute z-10 bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
-                     />
-                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-200" />
+            {[...images]
+               .sort((a, b) => Number(a.id) - Number(b.id))
+               .map((image, index) => (
+                  <div
+                     key={image.id}
+                     className={`${index % 2 === 0 ? "mt-8" : ""} group cursor-pointer`}
+                  >
+                     <div className="relative overflow-hidden bg-muted/10 aspect-[3/4] shadow-lg hover:shadow-2xl transition-all duration-500 group">
+                        <img
+                           src={image.image}
+                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <Fullscreen
+                           size={25}
+                           onClick={() => window.open(image.image, "_blank")}
+                           className="absolute z-10 bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-200" />
+                     </div>
                   </div>
-               </div>
-            ))}
+               ))}
          </div>
 
          <div className="flex justify-center gap-8 md:gap-16 mb-12 flex-wrap">
@@ -126,27 +129,32 @@ export const Portfolio = () => {
             <p className="text-sm tracking-[0.4em] text-muted-foreground/80 font-light">
                ARTISTA VISUAL
             </p>
-            <div className="mt-8 animate-pulse">
+            <div className="mt-8 mb-8 animate-pulse">
                <div className="w-1 h-10 bg-gradient-to-b from-blue-400/60 to-transparent mx-auto" />
             </div>
             <div className="flex flex-col items-center">
-            <Button
-               variant={"ghost"}
-               size={"lg"}
-               onClick={() => navigate("/video")}
-               className={`mt-8 w-fit font-normal tracking-widest border transition-all duration-300 hover:text-blue-400 hover:border-blue-400/60 hover:shadow-md hover:shadow-blue-400/20 hover:bg-blue-400/5`}
-            >
-               CONOCER LA CUERVO
-            </Button>
-            <Button
-               variant={"ghost"}
-               size={"lg"}
-               onClick={() => navigate("/casa-cuervo")}
-               className={`mt-8 w-fit font-normal tracking-widest border transition-all duration-300 hover:text-blue-400 hover:border-blue-400/60 hover:shadow-md hover:shadow-blue-400/20 hover:bg-blue-400/5`}
-            >
-               EXPLORAR CASA CUERVO
-            </Button>
-
+               <div className="relative w-full">
+                  <div>
+                     <iframe
+                        className="w-full aspect-video"
+                        src="https://www.youtube.com/embed/tik0ror2jdo?si=S5t4AXdIpQ_ZfEUo"
+                        title="Video"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                     />
+                  </div>
+               </div>
+               <div className="mt-8 animate-pulse">
+                  <div className="w-1 h-10 bg-gradient-to-t from-blue-400/60 to-transparent mx-auto" />
+               </div>
+               <Button
+                  variant={"ghost"}
+                  size={"lg"}
+                  onClick={() => navigate("/casa-cuervo")}
+                  className={`mt-8 w-fit font-normal tracking-widest border transition-all duration-300 hover:text-blue-400 hover:border-blue-400/60 hover:shadow-md hover:shadow-blue-400/20 hover:bg-blue-400/5`}
+               >
+                  - EXPLORAR CASA CUERVO -
+               </Button>
             </div>
             <div className="mt-8 animate-pulse">
                <div className="w-1 h-10 bg-gradient-to-t from-blue-400/60 to-transparent mx-auto" />
@@ -175,16 +183,44 @@ export const Portfolio = () => {
          <div className="max-w-4xl mx-auto space-y-12 text-center">
             <div className="relative">
                <p className="text-lg md:text-xl leading-relaxed text-muted-foreground italic">
-                  "Artista visual dedicada a explorar la intersección entre lo onírico y
-                  lo tangible, creando obras que invitan a la contemplación y el diálogo
-                  interior."
+                  "Artista visual nacida en Neiva, Huila (1993), cuyo trabajo explora la
+                  mezcla de colores y texturas en contextos locales, especialmente la
+                  fauna y flora colombiana."
                </p>
                <div className="absolute -top-4 -left-4 text-6xl text-blue-400/20 font-serif">
                   "
                </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 pt-12">
+            <div className="space-y-6 text-left max-w-3xl mx-auto">
+               <p className="text-muted-foreground leading-relaxed">
+                  Con una carrera de aproximadamente una década, Valentina ha plasmado un
+                  estilo distintivo que combina técnicas tradicionales como pintura,
+                  muralismo, cerámica, mosaico y tejidos, con elementos contemporáneos
+                  como materiales reciclados, arte digital y pintura experimental.
+               </p>
+               <p className="text-muted-foreground leading-relaxed">
+                  Su obra está profundamente influenciada por el colorido arte mexicano,
+                  los ecosistemas y animales sudamericanos, así como por la cultura
+                  colombiana. La experimentación con materiales reciclados refleja su
+                  compromiso con la sostenibilidad y coherencia en sus enfoques
+                  artísticos.
+               </p>
+            </div>
+
+            <p className="flex w-full justify-center gap-1 text-muted-foreground">
+               Para más información
+               <a
+                  href="/portafolio-general.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:text-blue-400 hover:underline hover:cursor-pointer flex items-center gap-1"
+               >
+                  click aqui <ExternalLink size={15} />
+               </a>
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 pt-10">
                <div className="space-y-4 p-6 bg-muted/30 backdrop-blur-sm">
                   <h3 className="text-sm tracking-widest text-foreground border-b border-foreground/20 pb-2">
                      FORMACIÓN
