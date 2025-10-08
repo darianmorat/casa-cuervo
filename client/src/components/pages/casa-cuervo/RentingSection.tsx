@@ -1,4 +1,5 @@
 import { Container } from "@/components/layout/Container";
+import { useAuthStore } from "@/stores/useAuthStore";
 import {
    Mail,
    Phone,
@@ -15,6 +16,8 @@ import {
 import { useState } from "react";
 
 export const RentingSection = () => {
+   const { getPhone } = useAuthStore();
+
    const [formData, setFormData] = useState({
       name: "",
       tel: "",
@@ -40,11 +43,34 @@ export const RentingSection = () => {
       "Otros",
    ];
 
-   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+   const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
 
-      console.log("Form submitted:", formData);
-      alert("¡Mensaje enviado! Te contactaremos pronto.");
+      const phoneNumber = await getPhone();
+      const message = `¡Hola! Soy *${formData.name}*
+
+Me gustaría solicitar información sobre un evento:
+
+*DETALLES DEL EVENTO*
+- Tipo: ${formData.eventType}
+- Fecha: ${formData.date}
+- Personas: ${formData.numberOfPeople}
+- Espacios: ${formData.requiredSpaces}
+- Días extra: ${formData.extraDays}
+- Obras: ${formData.artworkTypes}
+
+*INFORMACIÓN DE CONTACTO*
+- Teléfono: ${formData.tel}
+- Email: ${formData.email}
+
+*MENSAJE ADICIONAL*
+${formData.message || "Sin mensaje adicional"}
+
+Quedo atento a su respuesta. ¡Gracias!`;
+
+      const whatsappURL = `https://wa.me/57${phoneNumber}?text=${encodeURIComponent(message)}`;
+      window.open(whatsappURL, "_blank");
+
       setFormData({
          name: "",
          tel: "",

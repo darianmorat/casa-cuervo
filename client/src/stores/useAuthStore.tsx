@@ -18,6 +18,7 @@ type Store = {
    logout: () => Promise<void>;
    checkAuth: () => Promise<void>;
    updateUserPhone: (phone: string) => Promise<void>;
+   getPhone: () => Promise<string | null | undefined>;
 };
 
 export const useAuthStore = create<Store>((set, get) => ({
@@ -25,6 +26,21 @@ export const useAuthStore = create<Store>((set, get) => ({
    isLoading: false,
    checkingAuth: true,
    user: null,
+
+   getPhone: async () => {
+      set({ isLoading: true });
+      try {
+         const res = await api.get("/auth/get-phone");
+
+         if (res.data.success) {
+            return res.data.phone;
+         }
+      } catch (error) {
+         toast.error(error.response.data.message);
+      } finally {
+         set({ isLoading: false });
+      }
+   },
 
    authenticate: async (email, password) => {
       set({ isLoading: true });
@@ -92,7 +108,7 @@ export const useAuthStore = create<Store>((set, get) => ({
          const res = await api.post("/auth/phone", body);
 
          if (res.data.success) {
-            get().checkAuth()
+            get().checkAuth();
             set({ user: res.data.user });
             toast.info(res.data.message);
          }

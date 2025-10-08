@@ -31,4 +31,10 @@ export const userService = {
 
       return result;
    },
+
+   getPhone: async () => {
+      const [result] = await db.select({ phone: users.phone }).from(users).limit(1);
+
+      return result;
+   },
 };

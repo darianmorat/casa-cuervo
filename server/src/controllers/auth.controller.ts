@@ -100,3 +100,19 @@ export const updatePhone = async (req: AuthRequest, res: Response) => {
       });
    }
 };
+
+export const getPhone = async (_req: Request, res: Response) => {
+   try {
+      const result = await userService.getPhone();
+
+      res.status(200).json({
+         success: true,
+         phone: result.phone,
+      });
+   } catch {
+      res.status(500).json({
+         success: false,
+         message: "server error",
+      });
+   }
+};

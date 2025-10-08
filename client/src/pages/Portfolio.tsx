@@ -1,4 +1,5 @@
 import { Container } from "@/components/layout/Container";
+import { Button } from "@/components/ui/button";
 import { useArtworkStore } from "@/stores/useArtworkStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { Fullscreen } from "lucide-react";
@@ -9,8 +10,16 @@ export const Portfolio = () => {
    const { artworks, getArtworks } = useArtworkStore();
    const [categories, setCategories] = useState<string[]>([]);
 
-   const { user } = useAuthStore();
-   const phone = user?.phone;
+   const { getPhone } = useAuthStore();
+
+   const handleBuyBtn = async (artTitle: string) => {
+      const phone = await getPhone();
+
+      const message = `Hola, me gustaría comprar la obra "${artTitle}"`;
+      const url = `https://wa.me/57${phone}?text=${encodeURIComponent(message)}`;
+
+      window.open(url, "_blank");
+   };
 
    const { tab } = useParams<{ tab?: string }>();
 
@@ -26,9 +35,9 @@ export const Portfolio = () => {
 
    const handleTabChange = (newTab: "gallery" | "acerca" | "contacto" | "obras") => {
       if (newTab === "gallery") {
-         navigate("/portfolio");
+         navigate("/");
       } else {
-         navigate(`/portfolio/${newTab}`);
+         navigate(`/${newTab}`);
       }
    };
 
@@ -109,7 +118,7 @@ export const Portfolio = () => {
             </button>
          </div>
 
-         <div className="text-center mb-20">
+         <div className="text-center mb-10">
             <h1 className="text-5xl md:text-6xl font-thin tracking-widest mb-6 bg-gradient-to-r from-foreground via-blue-400 to-foreground bg-clip-text text-transparent">
                LA CUERVO
             </h1>
@@ -118,7 +127,29 @@ export const Portfolio = () => {
                ARTISTA VISUAL
             </p>
             <div className="mt-8 animate-pulse">
-               <div className="w-1 h-8 bg-gradient-to-b from-blue-400/60 to-transparent mx-auto" />
+               <div className="w-1 h-10 bg-gradient-to-b from-blue-400/60 to-transparent mx-auto" />
+            </div>
+            <div className="flex flex-col items-center">
+            <Button
+               variant={"ghost"}
+               size={"lg"}
+               onClick={() => navigate("/video")}
+               className={`mt-8 w-fit font-normal tracking-widest border transition-all duration-300 hover:text-blue-400 hover:border-blue-400/60 hover:shadow-md hover:shadow-blue-400/20 hover:bg-blue-400/5`}
+            >
+               CONOCER LA CUERVO
+            </Button>
+            <Button
+               variant={"ghost"}
+               size={"lg"}
+               onClick={() => navigate("/casa-cuervo")}
+               className={`mt-8 w-fit font-normal tracking-widest border transition-all duration-300 hover:text-blue-400 hover:border-blue-400/60 hover:shadow-md hover:shadow-blue-400/20 hover:bg-blue-400/5`}
+            >
+               EXPLORAR CASA CUERVO
+            </Button>
+
+            </div>
+            <div className="mt-8 animate-pulse">
+               <div className="w-1 h-10 bg-gradient-to-t from-blue-400/60 to-transparent mx-auto" />
             </div>
          </div>
       </>
@@ -310,9 +341,6 @@ export const Portfolio = () => {
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                            {categoryArtworks.map((artwork) => {
-                              const message = `Hola, me gustaría comprar la obra "${artwork.title}"`;
-                              const url = `https://wa.me/57${phone}?text=${encodeURIComponent(message)}`;
-
                               return (
                                  <div
                                     key={artwork.id}
@@ -363,7 +391,7 @@ export const Portfolio = () => {
                                              $ {artwork.price}
                                           </span>
                                           <button
-                                             onClick={() => window.open(url, "_blank")}
+                                             onClick={() => handleBuyBtn(artwork.title)}
                                              disabled={artwork.available === false}
                                              className={`text-xs tracking-widest px-4 py-2 border transition-all duration-300 ${
                                                 artwork.available
