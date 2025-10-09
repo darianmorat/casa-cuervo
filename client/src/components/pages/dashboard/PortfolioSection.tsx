@@ -2,8 +2,13 @@ import { Button } from "@/components/ui/button";
 import { DropImage } from "@/components/ui/DropZone";
 import { Modal } from "@/components/ui/Modal";
 import { usePortfolioStore } from "@/stores/usePortfolioStore";
-import { Fullscreen, X } from "lucide-react";
+import { Fullscreen, X, XCircleIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+
+type Image = {
+   id: string;
+   image: string;
+};
 
 interface FileWithPreview extends File {
    preview: string;
@@ -17,29 +22,12 @@ type ShowFormState = {
 };
 
 export const PortfolioSection = () => {
+   const [selectedImage, setSelectedImage] = useState<Image | null>(null);
    const [showForm, setShowForm] = useState<ShowFormState>({ open: false, for: "" });
    const [filesByPosition, setFilesByPosition] = useState<
       Record<number, FileWithPreview[]>
    >({});
    const { images, getImages, uploadImage, deleteImage, isLoading } = usePortfolioStore();
-   // const images = [
-   //    {
-   //       id: "1",
-   //       image: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468920/473368825_18474682114024094_7048284083203549906_n._siycn6.jpg",
-   //    },
-   //    {
-   //       id: "2",
-   //       image: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468919/458383962_18449743495024094_3853524860249220110_n._gc6dyt.jpg",
-   //    },
-   //    {
-   //       id: "3",
-   //       image: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468919/448275728_18434292652024094_4885150987941140735_n._ni3cin.jpg",
-   //    },
-   //    {
-   //       id: "4",
-   //       image: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468919/448272816_18434292718024094_2129371369259876850_n._cbyhop.jpg",
-   //    },
-   // ];
 
    useEffect(() => {
       getImages();
@@ -125,7 +113,7 @@ export const PortfolioSection = () => {
                               />
                               <Fullscreen
                                  size={25}
-                                 onClick={() => window.open(image.image, "_blank")}
+                                 onClick={() => setSelectedImage(image)}
                                  className="absolute z-10 bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer drop-shadow-lg"
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-200" />
@@ -243,6 +231,23 @@ export const PortfolioSection = () => {
                         Cancelar
                      </Button>
                   </div>
+               </div>
+            </Modal>
+         )}
+
+         {selectedImage && (
+            <Modal onClose={() => setSelectedImage(null)} className="backdrop-blur-sm">
+               <div className="relative max-w-7xl max-h-[90vh] m-4">
+                  <div
+                     className="absolute right-0 top-0 text-white/80 hover:text-white hover:cursor-pointer p-3"
+                     onClick={() => setSelectedImage(null)}
+                  >
+                     <XCircleIcon size={30} />
+                  </div>
+                  <img
+                     src={selectedImage.image}
+                     className="max-w-full max-h-[85vh] object-contain"
+                  />
                </div>
             </Modal>
          )}

@@ -41,7 +41,7 @@ const zones = [
 
 export const ZoneSection = () => {
    const [currentIndex, setCurrentIndex] = useState(0);
-   const [isAutoPlay, setIsAutoPlay] = useState(false); // Toggle this to enable/disable auto-slide
+   const [isAutoPlay, setIsAutoPlay] = useState(true); // Toggle this to enable/disable auto-slide
 
    // Auto-slide functionality
    useEffect(() => {
@@ -79,7 +79,7 @@ export const ZoneSection = () => {
             <div className="flex justify-center mb-8">
                <Button
                   onClick={() => setIsAutoPlay(!isAutoPlay)}
-                  variant={`${isAutoPlay ? "default" : "outline"}`}
+                  variant={`${isAutoPlay ? "outline" : "default"}`}
                >
                   Auto-slide: {isAutoPlay ? "ON" : "OFF"}
                </Button>

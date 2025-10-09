@@ -1,17 +1,25 @@
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/button";
+import { Modal } from "@/components/ui/Modal";
 import { useArtworkStore } from "@/stores/useArtworkStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { usePortfolioStore } from "@/stores/usePortfolioStore";
-import { ExternalLink, Fullscreen } from "lucide-react";
+import { ExternalLink, Fullscreen, XCircleIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+type Image = {
+   id: string;
+   image: string;
+};
+
 export const Portfolio = () => {
    const { artworks, getArtworks } = useArtworkStore();
-   const [categories, setCategories] = useState<string[]>([]);
    const { images, getImages } = usePortfolioStore();
    const { getPhone } = useAuthStore();
+
+   const [selectedImage, setSelectedImage] = useState<Image | null>(null);
+   const [categories, setCategories] = useState<string[]>([]);
 
    const handleBuyBtn = async (artTitle: string) => {
       const phone = await getPhone();
@@ -65,7 +73,7 @@ export const Portfolio = () => {
                         />
                         <Fullscreen
                            size={25}
-                           onClick={() => window.open(image.image, "_blank")}
+                           onClick={() => setSelectedImage(image)}
                            className="absolute z-10 bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-200" />
@@ -446,6 +454,23 @@ export const Portfolio = () => {
                </p>
             </div>
          </footer>
+
+         {selectedImage && (
+            <Modal onClose={() => setSelectedImage(null)} className="backdrop-blur-sm">
+               <div className="relative max-w-7xl max-h-[90vh] m-4">
+                  <div
+                     className="absolute right-0 top-0 text-white/80 hover:text-white hover:cursor-pointer p-3"
+                     onClick={() => setSelectedImage(null)}
+                  >
+                     <XCircleIcon size={30} />
+                  </div>
+                  <img
+                     src={selectedImage.image}
+                     className="max-w-full max-h-[85vh] object-contain"
+                  />
+               </div>
+            </Modal>
+         )}
       </div>
    );
 };

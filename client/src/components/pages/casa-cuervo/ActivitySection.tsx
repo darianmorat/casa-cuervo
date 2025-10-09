@@ -1,11 +1,18 @@
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/button";
+import { Modal } from "@/components/ui/Modal";
 import { useActivityStore } from "@/stores/useActivityStore";
-import { Calendar, Clock, Fullscreen } from "lucide-react";
-import { useEffect } from "react";
+import { Calendar, Clock, Fullscreen, XCircleIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+
+type Image = {
+   id: string;
+   image: string;
+};
 
 export const ActivitySection = () => {
    const { activities, getActivities } = useActivityStore();
+   const [selectedImage, setSelectedImage] = useState<Image | null>(null);
 
    useEffect(() => {
       getActivities();
@@ -45,7 +52,7 @@ export const ActivitySection = () => {
                                     />
                                     <Fullscreen
                                        size={25}
-                                       onClick={() => window.open(activity.image, "_blank")}
+                                       onClick={() => setSelectedImage(activity)}
                                        className="absolute z-10 bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-200" />
@@ -92,6 +99,23 @@ export const ActivitySection = () => {
                         );
                      })}
                </div>
+            )}
+
+            {selectedImage && (
+               <Modal onClose={() => setSelectedImage(null)} className="backdrop-blur-sm">
+                  <div className="relative max-w-7xl max-h-[90vh] m-4">
+                     <div
+                        className="absolute right-0 top-0 text-white/80 hover:text-white hover:cursor-pointer p-3"
+                        onClick={() => setSelectedImage(null)}
+                     >
+                        <XCircleIcon size={30} />
+                     </div>
+                     <img
+                        src={selectedImage.image}
+                        className="max-w-full max-h-[85vh] object-contain"
+                     />
+                  </div>
+               </Modal>
             )}
          </Container>
       </section>

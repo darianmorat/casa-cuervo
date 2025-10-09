@@ -12,12 +12,19 @@ import {
    PencilLine,
    HashIcon,
    Fullscreen,
+   XCircleIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CreateArtwork } from "./artwork/CreateArtwork";
 import { DeleteArtwork } from "./artwork/DeleteArtwork";
 import { EditArtwork } from "./artwork/EditArtwork";
 import { artworkSchema, type ArtworkFormData } from "./artwork/ArtworkSchema";
+import { Modal } from "@/components/ui/Modal";
+
+type Image = {
+   id: string;
+   image: string;
+};
 
 interface FileWithPreview extends File {
    preview: string;
@@ -32,6 +39,7 @@ type ShowFormState = {
 };
 
 export const ArtworkSection = () => {
+   const [selectedImage, setSelectedImage] = useState<Image | null>(null);
    const [showForm, setShowForm] = useState<ShowFormState>({ open: false, for: "" });
    const [categories, setCategories] = useState<string[]>([]);
    const { artworks, getArtworks, createArtwork, editArtwork } = useArtworkStore();
@@ -142,9 +150,7 @@ export const ArtworkSection = () => {
                                     />
                                     <Fullscreen
                                        size={25}
-                                       onClick={() =>
-                                          window.open(artwork.image, "_blank")
-                                       }
+                                       onClick={() => setSelectedImage(artwork)}
                                        className="absolute z-10 bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-200" />
@@ -218,6 +224,23 @@ export const ArtworkSection = () => {
 
          {showForm.for === "delete" && showForm.id && (
             <DeleteArtwork artworkId={showForm.id} closeForm={closeForm} />
+         )}
+
+         {selectedImage && (
+            <Modal onClose={() => setSelectedImage(null)} className="backdrop-blur-sm">
+               <div className="relative max-w-7xl max-h-[90vh] m-4">
+                  <div
+                     className="absolute right-0 top-0 text-white/80 hover:text-white hover:cursor-pointer p-3"
+                     onClick={() => setSelectedImage(null)}
+                  >
+                     <XCircleIcon size={30} />
+                  </div>
+                  <img
+                     src={selectedImage.image}
+                     className="max-w-full max-h-[85vh] object-contain"
+                  />
+               </div>
+            </Modal>
          )}
       </div>
    );
