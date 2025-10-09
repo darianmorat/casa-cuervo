@@ -375,9 +375,7 @@ export const Portfolio = () => {
                                        />
                                        <Fullscreen
                                           size={25}
-                                          onClick={() =>
-                                             window.open(artwork.image, "_blank")
-                                          }
+                                          onClick={() => setSelectedImage(artwork)}
                                           className="absolute z-10 bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
                                        />
 
