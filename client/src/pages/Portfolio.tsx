@@ -1,6 +1,7 @@
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/Modal";
+import { useArtworkStore } from "@/stores/useArtworkStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { usePortfolioStore } from "@/stores/usePortfolioStore";
 import { useProductStore } from "@/stores/useProductStore";
@@ -15,11 +16,13 @@ type Image = {
 
 export const Portfolio = () => {
    const { products, getProducts } = useProductStore();
+   const { artworks, getArtworks } = useArtworkStore();
    const { images, getImages } = usePortfolioStore();
    const { getPhone } = useAuthStore();
 
    const [selectedImage, setSelectedImage] = useState<Image | null>(null);
-   const [categories, setCategories] = useState<string[]>([]);
+   const [categoriesObras, setCategoriesObras] = useState<string[]>([]);
+   const [categoriesProduct, setCategoriesProduct] = useState<string[]>([]);
 
    const handleBuyBtn = async (artTitle: string) => {
       const phone = await getPhone();
@@ -54,6 +57,7 @@ export const Portfolio = () => {
    };
 
    useEffect(() => {
+      getArtworks();
       getProducts();
       getImages();
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -331,9 +335,9 @@ export const Portfolio = () => {
    );
 
    useEffect(() => {
-      const categories = [...new Set(products.map((artwork) => artwork.category))];
-      setCategories(categories);
-   }, [products]);
+      const categories = [...new Set(artworks.map((artwork) => artwork.category))];
+      setCategoriesObras(categories);
+   }, [artworks]);
 
    const renderObras = () => (
       <div className="animate-in fade-in duration-400">
@@ -352,14 +356,14 @@ export const Portfolio = () => {
             <div className="w-24 h-px bg-gradient-to-r from-transparent via-foreground/40 to-transparent mx-auto" />
          </div>
 
-         {products.length <= 0 ? (
+         {artworks.length <= 0 ? (
             <div className="text-center text-muted-foreground">
                Upps! Parece que no hay obras
             </div>
          ) : (
             <div className="space-y-12">
-               {categories.map((category) => {
-                  const categoryArtworks = products.filter(
+               {categoriesObras.map((category) => {
+                  const categoryArtworks = artworks.filter(
                      (artwork) => artwork.category === category,
                   );
 
@@ -442,10 +446,10 @@ export const Portfolio = () => {
       </div>
    );
 
-   // useEffect(() => {
-   //    const categories = [...new Set(artworks.map((artwork) => artwork.category))];
-   //    setCategories(categories);
-   // }, [artworks]);
+   useEffect(() => {
+      const categories = [...new Set(products.map((product) => product.category))];
+      setCategoriesProduct(categories);
+   }, [products]);
 
    const renderMerch = () => (
       <div className="animate-in fade-in duration-400">
@@ -464,15 +468,15 @@ export const Portfolio = () => {
             <div className="w-24 h-px bg-gradient-to-r from-transparent via-foreground/40 to-transparent mx-auto" />
          </div>
 
-         {products.length <= 0 ? (
+         {artworks.length <= 0 ? (
             <div className="text-center text-muted-foreground">
                Upps! Parece que no hay items
             </div>
          ) : (
             <div className="space-y-12">
-               {categories.map((category) => {
-                  const categoryArtworks = products.filter(
-                     (artwork) => artwork.category === category,
+               {categoriesProduct.map((category) => {
+                  const categoryProducts = artworks.filter(
+                     (product) => product.category === category,
                   );
 
                   return (
@@ -481,21 +485,21 @@ export const Portfolio = () => {
                            {category}
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                           {categoryArtworks.map((artwork) => {
+                           {categoryProducts.map((product) => {
                               return (
                                  <div
-                                    key={artwork.id}
+                                    key={product.id}
                                     className="relative group cursor-pointer flex flex-col h-full"
                                  >
                                     <div className="relative overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500">
                                        <img
-                                          src={artwork.image}
-                                          alt={artwork.title}
+                                          src={product.image}
+                                          alt={product.title}
                                           className="w-full h-100 object-cover transition-transform duration-500 group-hover:scale-110"
                                        />
                                        <Fullscreen
                                           size={25}
-                                          onClick={() => setSelectedImage(artwork)}
+                                          onClick={() => setSelectedImage(product)}
                                           className="absolute z-10 bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
                                        />
 
@@ -503,15 +507,15 @@ export const Portfolio = () => {
 
                                        <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-500">
                                           <h3 className="text-lg font-medium mb-1">
-                                             {artwork.title}
+                                             {product.title}
                                           </h3>
                                           <p className="text-sm opacity-90">
-                                             {artwork.size} • {artwork.year}
+                                             {product.size} • {product.year}
                                           </p>
                                        </div>
                                     </div>
 
-                                    {artwork.available ? (
+                                    {product.available ? (
                                        <div className="absolute top-2 right-2 bg-emerald-100 text-emerald-600 m-2 py-1 px-2 font-medium text-xs">
                                           DISPONIBLE
                                        </div>
@@ -523,17 +527,17 @@ export const Portfolio = () => {
 
                                     <div className="space-y-3 p-4 bg-gradient-to-b from-muted/90 to-muted/10 border-x border-b border-foreground/10 flex-1 flex flex-col">
                                        <div className="text-sm text-muted-foreground mb-4 flex-1">
-                                          {artwork.technique}
+                                          {product.technique}
                                        </div>
                                        <div className="flex justify-between items-center">
                                           <span className="text-lg font-semibold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                                             $ {artwork.price}
+                                             $ {product.price}
                                           </span>
                                           <button
-                                             onClick={() => handleBuyBtn(artwork.title)}
-                                             disabled={artwork.available === false}
+                                             onClick={() => handleBuyBtn(product.title)}
+                                             disabled={product.available === false}
                                              className={`text-xs tracking-widest px-4 py-2 border transition-all duration-300 ${
-                                                artwork.available
+                                                product.available
                                                    ? "hover:text-blue-400 hover:border-blue-400/60 hover:shadow-md hover:shadow-blue-400/20 hover:bg-blue-400/5"
                                                    : "opacity-50 cursor-not-allowed"
                                              }`}
