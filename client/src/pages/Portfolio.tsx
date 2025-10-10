@@ -138,7 +138,7 @@ export const Portfolio = () => {
                <div className="relative w-full">
                   <iframe
                      className="w-full aspect-video"
-                     src="https://www.youtube.com/embed/tik0ror2jdo?si=S5t4AXdIpQ_ZfEUo"
+                     src="https://www.youtube-nocookie.com/embed/tik0ror2jdo?si=S5t4AXdIpQ_ZfEUo"
                      title="Video"
                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                      allowFullScreen
