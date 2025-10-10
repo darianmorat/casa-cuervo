@@ -15,6 +15,13 @@
       "when": 1759956688928,
       "tag": "0001_red_brood",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1760114544995,
+      "tag": "0002_gorgeous_ser_duncan",
+      "breakpoints": true
     }
   ]
 }

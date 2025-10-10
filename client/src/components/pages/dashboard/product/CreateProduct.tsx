@@ -20,41 +20,42 @@ import { Modal } from "@/components/ui/Modal";
 import { Save, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import type { ArtworkFormData } from "./ArtworkSchema";
 import { DropImage } from "@/components/ui/DropZone";
 import { useEffect, useState } from "react";
+import type { ProductFormData } from "./ProductSchema";
 
 interface FileWithPreview extends File {
    preview: string;
    id: string;
 }
 
-interface CreateArtworkProps {
-   artworkForm: UseFormReturn<ArtworkFormData>;
-   handleCreateArtwork: (data: ArtworkFormData, files: FileWithPreview[]) => void;
+interface CreateProductProps {
+   productForm: UseFormReturn<ProductFormData>;
+   handleCreateProduct: (data: ProductFormData, files: FileWithPreview[]) => void;
    closeForm: () => void;
 }
 
-export const CreateArtwork = ({
-   artworkForm,
-   handleCreateArtwork,
+export const CreateProduct = ({
+   productForm,
+   handleCreateProduct,
    closeForm,
-}: CreateArtworkProps) => {
+}: CreateProductProps) => {
    const [files, setFiles] = useState<FileWithPreview[]>([]);
 
+   // Add useEffect to update form field when files change
    useEffect(() => {
       if (files.length > 0) {
-         artworkForm.setValue("image", files[0].name);
-         artworkForm.clearErrors("image");
+         productForm.setValue("image", files[0].name);
+         productForm.clearErrors("image");
       } else {
-         artworkForm.setValue("image", "");
+         productForm.setValue("image", "");
       }
-   }, [files, artworkForm]);
+   }, [files, productForm]);
 
    return (
       <Modal onClose={closeForm} orientation="right">
          <div className="relative bg-background dark:bg-card p-6 w-full max-w-lg overflow-y-scroll">
-            <h3 className="text-lg font-semibold mb-4">Nueva obra</h3>
+            <h3 className="text-lg font-semibold mb-4">Nuevo producto</h3>
 
             <Button
                type="button"
@@ -65,16 +66,16 @@ export const CreateArtwork = ({
                <X className="w-6 h-6" />
             </Button>
 
-            <Form {...artworkForm}>
+            <Form {...productForm}>
                <form
-                  onSubmit={artworkForm.handleSubmit((data) => {
-                     handleCreateArtwork(data, files);
+                  onSubmit={productForm.handleSubmit((data) => {
+                     handleCreateProduct(data, files);
                   })}
                   className="space-y-4"
                >
                   <div className="bg-accent/50">
                      <FormField
-                        control={artworkForm.control}
+                        control={productForm.control}
                         name="available"
                         render={({ field }) => (
                            <FormItem className="flex flex-row items-center justify-between border-y p-4 mb-6">
@@ -84,8 +85,8 @@ export const CreateArtwork = ({
                                  </FormLabel>
                                  <div className="text-sm text-muted-foreground">
                                     {field.value
-                                       ? "Esta obra está disponible para la venta"
-                                       : "Esta obra ya fue vendida"}
+                                       ? "Esta producto está disponible para la venta"
+                                       : "Esta producto ya fue vendida"}
                                  </div>
                               </div>
                               <FormControl>
@@ -100,13 +101,13 @@ export const CreateArtwork = ({
                   </div>
 
                   <FormField
-                     control={artworkForm.control}
+                     control={productForm.control}
                      name="title"
                      render={({ field }) => (
                         <FormItem>
                            <FormLabel>Título</FormLabel>
                            <FormControl>
-                              <Input {...field} placeholder="Nombre de la obra" />
+                              <Input {...field} placeholder="Nombre del producto" />
                            </FormControl>
                            <FormMessage />
                         </FormItem>
@@ -114,7 +115,7 @@ export const CreateArtwork = ({
                   />
 
                   <FormField
-                     control={artworkForm.control}
+                     control={productForm.control}
                      name="category"
                      render={({ field }) => (
                         <FormItem>
@@ -125,14 +126,13 @@ export const CreateArtwork = ({
                            >
                               <FormControl>
                                  <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Selecciona el tipo de obra" />
+                                    <SelectValue placeholder="Selecciona el tipo de producto" />
                                  </SelectTrigger>
                               </FormControl>
                               <SelectContent className="z-99">
-                                 <SelectItem value="pintura">Pintura</SelectItem>
-                                 <SelectItem value="mural">Mural</SelectItem>
-                                 <SelectItem value="esculturas">Esculturas</SelectItem>
-                                 <SelectItem value="grabado">Grabado</SelectItem>
+                                 <SelectItem value="pintura">Camisetas</SelectItem>
+                                 <SelectItem value="mural">Tote bag</SelectItem>
+                                 <SelectItem value="grabado">Otro</SelectItem>
                               </SelectContent>
                            </Select>
                            <FormMessage />
@@ -141,7 +141,7 @@ export const CreateArtwork = ({
                   />
 
                   <FormField
-                     control={artworkForm.control}
+                     control={productForm.control}
                      name="image"
                      render={() => (
                         <FormItem>
@@ -154,9 +154,8 @@ export const CreateArtwork = ({
                      )}
                   />
 
-
                   <FormField
-                     control={artworkForm.control}
+                     control={productForm.control}
                      name="technique"
                      render={({ field }) => (
                         <FormItem>
@@ -175,7 +174,7 @@ export const CreateArtwork = ({
 
                   <div className="grid grid-cols-2 gap-4">
                      <FormField
-                        control={artworkForm.control}
+                        control={productForm.control}
                         name="price"
                         render={({ field }) => (
                            <FormItem>
@@ -189,7 +188,7 @@ export const CreateArtwork = ({
                      />
 
                      <FormField
-                        control={artworkForm.control}
+                        control={productForm.control}
                         name="size"
                         render={({ field }) => (
                            <FormItem>
@@ -204,7 +203,7 @@ export const CreateArtwork = ({
                   </div>
 
                   <FormField
-                     control={artworkForm.control}
+                     control={productForm.control}
                      name="year"
                      render={({ field }) => (
                         <FormItem>

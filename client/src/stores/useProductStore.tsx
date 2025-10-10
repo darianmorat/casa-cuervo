@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { toast } from "react-toastify";
 import api from "@/api/axios";
 
-type Artwork = {
+type Merch = {
    id: string;
    title: string;
    category: string;
@@ -27,24 +27,24 @@ type CreateProps = {
 
 type Store = {
    isLoading: boolean;
-   artworks: Artwork[];
-   getArtworks: () => Promise<void>;
-   createArtwork: (values: CreateProps, files: File[]) => Promise<void>;
-   editArtwork: (values: CreateProps, files: File[], id: string) => Promise<void>;
-   deleteArtwork: (id: string) => Promise<void>;
+   products: Merch[];
+   getProducts: () => Promise<void>;
+   createProduct: (values: CreateProps, files: File[]) => Promise<void>;
+   editProduct: (values: CreateProps, files: File[], id: string) => Promise<void>;
+   deleteProduct: (id: string) => Promise<void>;
    deleteAsset: (url: string) => Promise<boolean | void>;
 };
 
-export const useArtworkStore = create<Store>((set, get) => ({
+export const useProductStore = create<Store>((set, get) => ({
    isLoading: false,
-   artworks: [],
+   products: [],
 
-   getArtworks: async () => {
+   getProducts: async () => {
       set({ isLoading: true });
       try {
-         const res = await api.get("/artwork/get-all");
+         const res = await api.get("/product/get-all");
          if (res.data.success) {
-            set({ artworks: res.data.artworks });
+            set({ products: res.data.products });
          }
       } catch (error) {
          toast.error(error.response.data.message);
@@ -53,7 +53,7 @@ export const useArtworkStore = create<Store>((set, get) => ({
       }
    },
 
-   createArtwork: async (values, files) => {
+   createProduct: async (values, files) => {
       set({ isLoading: true });
       try {
          const resImg = await api.get("/asset/generate-signature");
@@ -99,13 +99,13 @@ export const useArtworkStore = create<Store>((set, get) => ({
             available: values.available,
          };
 
-         const res = await api.post("/artwork/create", body);
+         const res = await api.post("/product/create", body);
 
          if (res.data.success) {
             toast.success(res.data.message);
-            const currentArtworks = get().artworks;
-            const newArtwork = res.data.newArtwork;
-            set({ artworks: [...currentArtworks, newArtwork] });
+            const currentProducts = get().products;
+            const newProduct = res.data.newProduct;
+            set({ products: [...currentProducts, newProduct] });
          }
       } catch (error) {
          toast.error(error.response.data.message);
@@ -114,14 +114,14 @@ export const useArtworkStore = create<Store>((set, get) => ({
       }
    },
 
-   editArtwork: async (values, files, id) => {
+   editProduct: async (values, files, id) => {
       set({ isLoading: true });
       try {
          let imageUrl = values.image;
 
          if (files.length >= 1) {
             const resImg = await api.get("/asset/generate-signature");
-            const file = files[0]; // we are handling just 1 here
+            const file = files[0];
 
             const formData = new FormData();
             formData.append("file", file);
@@ -139,7 +139,7 @@ export const useArtworkStore = create<Store>((set, get) => ({
             );
 
             if (!cloudRes.ok) {
-               throw new Error("Error al subir imagen a Cloudinary");
+               throw new Error();
             }
 
             const uploadedData = await cloudRes.json();
@@ -166,15 +166,15 @@ export const useArtworkStore = create<Store>((set, get) => ({
             available: values.available,
          };
 
-         const res = await api.post(`/artwork/edit/${id}`, body);
+         const res = await api.post(`/product/edit/${id}`, body);
 
          if (res.data.success) {
             toast.success(res.data.message);
-            const currentArtworks = get().artworks;
-            const updatedArtwork = res.data.artwork;
+            const currentProducts = get().products;
+            const updatedProduct = res.data.product;
             set({
-               artworks: currentArtworks.map((artwork) =>
-                  artwork.id === id ? updatedArtwork : artwork,
+               products: currentProducts.map((product) =>
+                  product.id === id ? updatedProduct : product,
                ),
             });
          }
@@ -185,19 +185,19 @@ export const useArtworkStore = create<Store>((set, get) => ({
       }
    },
 
-   deleteArtwork: async (id) => {
+   deleteProduct: async (id) => {
       set({ isLoading: true });
       try {
-         const res = await api.delete(`/artwork/delete/${id}`);
+         const res = await api.delete(`/product/delete/${id}`);
 
          if (res.data.success) {
             toast.success(res.data.message);
-            const currentArtwork = get().artworks;
-            const updatedArtworks = currentArtwork.filter((artwork) => artwork.id !== id);
-            set({ artworks: updatedArtworks });
+            const currentProduct = get().products;
+            const updatedProducts = currentProduct.filter((product) => product.id !== id);
+            set({ products: updatedProducts });
 
-            if (res.data.artwork.image) {
-               get().deleteAsset(res.data.artwork.image);
+            if (res.data.product.image) {
+               get().deleteAsset(res.data.product.image);
             }
          }
       } catch (error) {

@@ -22,9 +22,9 @@ import { Save, X } from "lucide-react";
 import { artworkSchema, type ArtworkFormData } from "./ArtworkSchema";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { useActivityStore } from "@/stores/useActivityStore";
 import { useEffect, useState } from "react";
 import { DropImage } from "@/components/ui/DropZone";
+import { useArtworkStore } from "@/stores/useArtworkStore";
 
 interface FileWithPreview extends File {
    preview: string;
@@ -45,7 +45,7 @@ export const EditArtwork = ({
 }: EditArtworkProps) => {
    const [files, setFiles] = useState<FileWithPreview[]>([]);
    const [isExistingImageDeleted, setIsExistingImageDeleted] = useState(false);
-   const { deleteAsset } = useActivityStore();
+   const { deleteAsset } = useArtworkStore();
 
    const artworkForm = useForm({
       resolver: zodResolver(artworkSchema),
@@ -77,7 +77,10 @@ export const EditArtwork = ({
    };
 
    const handleFormSubmit = async (data: ArtworkFormData) => {
-      await deleteAsset(artwork.image);
+      if (files.length > 0 && artwork.image) {
+         await deleteAsset(artwork.image);
+      }
+
       handleEditArtwork(data, files);
    };
 

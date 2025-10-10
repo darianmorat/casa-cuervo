@@ -68,7 +68,10 @@ export const EditActivity = ({
    };
 
    const handleFormSubmit = async (data: ActivityFormData) => {
-      await deleteAsset(activity.image);
+      if (files.length > 0 && activity.image) {
+         await deleteAsset(activity.image);
+      }
+
       handleEditActivity(data, files);
    };
 

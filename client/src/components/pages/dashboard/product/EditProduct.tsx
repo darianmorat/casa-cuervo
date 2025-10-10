@@ -14,47 +14,86 @@ import {
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
-import type { UseFormReturn } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, type UseFormReturn } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/Modal";
 import { Save, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import type { ArtworkFormData } from "./ArtworkSchema";
-import { DropImage } from "@/components/ui/DropZone";
 import { useEffect, useState } from "react";
+import { DropImage } from "@/components/ui/DropZone";
+import { productSchema, type ProductFormData } from "./ProductSchema";
+import { useProductStore } from "@/stores/useProductStore";
 
 interface FileWithPreview extends File {
    preview: string;
    id: string;
 }
 
-interface CreateArtworkProps {
-   artworkForm: UseFormReturn<ArtworkFormData>;
-   handleCreateArtwork: (data: ArtworkFormData, files: FileWithPreview[]) => void;
+interface EditProductProps {
+   product: ProductFormData;
+   productForm: UseFormReturn<ProductFormData>;
+   handleEditProduct: (data: ProductFormData, files: FileWithPreview[]) => void;
    closeForm: () => void;
 }
 
-export const CreateArtwork = ({
-   artworkForm,
-   handleCreateArtwork,
+export const EditProduct = ({
+   product,
+   handleEditProduct,
    closeForm,
-}: CreateArtworkProps) => {
+}: EditProductProps) => {
    const [files, setFiles] = useState<FileWithPreview[]>([]);
+   const [isExistingImageDeleted, setIsExistingImageDeleted] = useState(false);
+   const { deleteAsset } = useProductStore();
+
+   const productForm = useForm({
+      resolver: zodResolver(productSchema),
+      defaultValues: {
+         title: product.title,
+         category: product.category,
+         technique: product.technique,
+         price: product.price,
+         size: product.size,
+         year: product.year,
+         image: product.image,
+         available: product.available,
+      },
+   });
 
    useEffect(() => {
       if (files.length > 0) {
-         artworkForm.setValue("image", files[0].name);
-         artworkForm.clearErrors("image");
+         productForm.setValue("image", files[0].name);
+         productForm.clearErrors("image");
+      } else if (isExistingImageDeleted) {
+         productForm.setValue("image", "");
       } else {
-         artworkForm.setValue("image", "");
+         productForm.setValue("image", product.image);
       }
-   }, [files, artworkForm]);
+   }, [files, isExistingImageDeleted, productForm, product.image]);
+
+   const handleMarkExistingImageForDeletion = () => {
+      setIsExistingImageDeleted(true);
+   };
+
+   const handleFormSubmit = async (data: ProductFormData) => {
+      if (files.length > 0 && product.image) {
+         await deleteAsset(product.image);
+      }
+
+      handleEditProduct(data, files);
+   };
+
+   const handleCancel = () => {
+      setFiles([]);
+      setIsExistingImageDeleted(false);
+      closeForm();
+   };
 
    return (
       <Modal onClose={closeForm} orientation="right">
          <div className="relative bg-background dark:bg-card p-6 w-full max-w-lg overflow-y-scroll">
-            <h3 className="text-lg font-semibold mb-4">Nueva obra</h3>
+            <h3 className="text-lg font-semibold mb-4">Editar producto</h3>
 
             <Button
                type="button"
@@ -65,16 +104,14 @@ export const CreateArtwork = ({
                <X className="w-6 h-6" />
             </Button>
 
-            <Form {...artworkForm}>
+            <Form {...productForm}>
                <form
-                  onSubmit={artworkForm.handleSubmit((data) => {
-                     handleCreateArtwork(data, files);
-                  })}
+                  onSubmit={productForm.handleSubmit(handleFormSubmit)}
                   className="space-y-4"
                >
                   <div className="bg-accent/50">
                      <FormField
-                        control={artworkForm.control}
+                        control={productForm.control}
                         name="available"
                         render={({ field }) => (
                            <FormItem className="flex flex-row items-center justify-between border-y p-4 mb-6">
@@ -84,8 +121,8 @@ export const CreateArtwork = ({
                                  </FormLabel>
                                  <div className="text-sm text-muted-foreground">
                                     {field.value
-                                       ? "Esta obra está disponible para la venta"
-                                       : "Esta obra ya fue vendida"}
+                                       ? "Esta producto está disponible para la venta"
+                                       : "Esta producto ya fue vendida"}
                                  </div>
                               </div>
                               <FormControl>
@@ -100,13 +137,13 @@ export const CreateArtwork = ({
                   </div>
 
                   <FormField
-                     control={artworkForm.control}
+                     control={productForm.control}
                      name="title"
                      render={({ field }) => (
                         <FormItem>
                            <FormLabel>Título</FormLabel>
                            <FormControl>
-                              <Input {...field} placeholder="Nombre de la obra" />
+                              <Input {...field} placeholder="Nombre del producto" />
                            </FormControl>
                            <FormMessage />
                         </FormItem>
@@ -114,7 +151,7 @@ export const CreateArtwork = ({
                   />
 
                   <FormField
-                     control={artworkForm.control}
+                     control={productForm.control}
                      name="category"
                      render={({ field }) => (
                         <FormItem>
@@ -125,14 +162,13 @@ export const CreateArtwork = ({
                            >
                               <FormControl>
                                  <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Selecciona el tipo de obra" />
+                                    <SelectValue placeholder="Selecciona el tipo de producto" />
                                  </SelectTrigger>
                               </FormControl>
                               <SelectContent className="z-99">
-                                 <SelectItem value="pintura">Pintura</SelectItem>
-                                 <SelectItem value="mural">Mural</SelectItem>
-                                 <SelectItem value="esculturas">Esculturas</SelectItem>
-                                 <SelectItem value="grabado">Grabado</SelectItem>
+                                 <SelectItem value="pintura">Camisetas</SelectItem>
+                                 <SelectItem value="mural">Tote bag</SelectItem>
+                                 <SelectItem value="grabado">Otro</SelectItem>
                               </SelectContent>
                            </Select>
                            <FormMessage />
@@ -141,7 +177,7 @@ export const CreateArtwork = ({
                   />
 
                   <FormField
-                     control={artworkForm.control}
+                     control={productForm.control}
                      name="image"
                      render={() => (
                         <FormItem>
@@ -153,10 +189,45 @@ export const CreateArtwork = ({
                         </FormItem>
                      )}
                   />
+                  <div className="">
+                     {files.length > 0
+                        ? null
+                        : !isExistingImageDeleted &&
+                          product.image && (
+                             <>
+                                <div className="space-y-4 pt-1">
+                                   <p className="text-sm -mt-1 flex gap-2">
+                                      <span className="font-semibold">
+                                         Imagen actual:
+                                      </span>
+                                      <span className="text-muted-foreground">
+                                         (max 1)
+                                      </span>
+                                   </p>
 
+                                   <div className="flex flex-row gap-3 flex-wrap justify-center bg-accent p-5">
+                                      <div className="h-30 w-30 relative group bg-accent">
+                                         <img
+                                            src={product.image}
+                                            className="h-full w-full object-cover border-2 border-black/40"
+                                         />
+                                         <button
+                                            type="button"
+                                            onClick={handleMarkExistingImageForDeletion}
+                                            className="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 flex items-center justify-center text-xs hover:bg-red-400 opacity-0 group-hover:opacity-100 cursor-pointer"
+                                            title="Marcar para eliminar"
+                                         >
+                                            <X size={18} />
+                                         </button>
+                                      </div>
+                                   </div>
+                                </div>
+                             </>
+                          )}
+                  </div>
 
                   <FormField
-                     control={artworkForm.control}
+                     control={productForm.control}
                      name="technique"
                      render={({ field }) => (
                         <FormItem>
@@ -175,7 +246,7 @@ export const CreateArtwork = ({
 
                   <div className="grid grid-cols-2 gap-4">
                      <FormField
-                        control={artworkForm.control}
+                        control={productForm.control}
                         name="price"
                         render={({ field }) => (
                            <FormItem>
@@ -189,7 +260,7 @@ export const CreateArtwork = ({
                      />
 
                      <FormField
-                        control={artworkForm.control}
+                        control={productForm.control}
                         name="size"
                         render={({ field }) => (
                            <FormItem>
@@ -204,7 +275,7 @@ export const CreateArtwork = ({
                   </div>
 
                   <FormField
-                     control={artworkForm.control}
+                     control={productForm.control}
                      name="year"
                      render={({ field }) => (
                         <FormItem>
@@ -223,7 +294,7 @@ export const CreateArtwork = ({
                      </Button>
                      <Button
                         type="button"
-                        onClick={closeForm}
+                        onClick={handleCancel}
                         variant={"outline"}
                         className="flex-1"
                      >

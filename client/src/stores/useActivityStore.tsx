@@ -114,43 +114,49 @@ export const useActivityStore = create<Store>((set, get) => ({
    editActivity: async (values, files, id) => {
       set({ isLoading: true });
       try {
-         const resImg = await api.get("/asset/generate-signature");
-         const file = files[0];
+         let imageUrl = values.image;
 
-         const formData = new FormData();
-         formData.append("file", file);
-         formData.append("api_key", resImg.data.apiKey);
-         formData.append("timestamp", resImg.data.timestamp);
-         formData.append("signature", resImg.data.signature);
+         if (files.length >= 1) {
+            const resImg = await api.get("/asset/generate-signature");
+            const file = files[0];
 
-         const cloudName = resImg.data.cloudName;
-         const cloudRes = await fetch(
-            `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
-            {
-               method: "POST",
-               body: formData,
-            },
-         );
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("api_key", resImg.data.apiKey);
+            formData.append("timestamp", resImg.data.timestamp);
+            formData.append("signature", resImg.data.signature);
 
-         if (!cloudRes.ok) {
-            throw new Error();
-         }
+            const cloudName = resImg.data.cloudName;
+            const cloudRes = await fetch(
+               `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
+               {
+                  method: "POST",
+                  body: formData,
+               },
+            );
 
-         const uploadedData = await cloudRes.json();
+            if (!cloudRes.ok) {
+               throw new Error();
+            }
 
-         if (uploadedData.secure_url) {
-            await api.post("/asset/save-metadata", {
-               public_id: uploadedData.public_id,
-               secure_url: uploadedData.secure_url,
-               resource_type: uploadedData.resource_type,
-            });
+            const uploadedData = await cloudRes.json();
+
+            if (uploadedData.secure_url) {
+               await api.post("/asset/save-metadata", {
+                  public_id: uploadedData.public_id,
+                  secure_url: uploadedData.secure_url,
+                  resource_type: uploadedData.resource_type,
+               });
+
+               imageUrl = uploadedData.secure_url;
+            }
          }
 
          const body = {
             title: values.title,
             date: values.date,
             time: values.time,
-            image: uploadedData.secure_url,
+            image: imageUrl,
             description: values.description,
             spots: values.spots,
             phone: values.phone,

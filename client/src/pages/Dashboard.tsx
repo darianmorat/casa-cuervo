@@ -1,5 +1,12 @@
 import React from "react";
-import { BriefcaseBusiness, Calendar, Edit3, LogOut, UserPenIcon } from "lucide-react";
+import {
+   BriefcaseBusiness,
+   Calendar,
+   Edit3,
+   LogOut,
+   Package,
+   UserPenIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { Container } from "@/components/layout/Container";
@@ -8,15 +15,22 @@ import { ArtworkSection } from "@/components/pages/dashboard/ArtworkSection";
 import { PersonalSection } from "@/components/pages/dashboard/PersonalSection";
 import { PortfolioSection } from "@/components/pages/dashboard/PortfolioSection";
 import { useNavigate, useParams } from "react-router-dom";
+import { ProductSection } from "@/components/pages/dashboard/ProductSection";
 
 export const Dashboard: React.FC = () => {
    const navigate = useNavigate();
    const { tab } = useParams<{ tab?: string }>();
    const { logout } = useAuthStore();
 
-   const getCurrentTab = (): "activities" | "artworks" | "portfolio" | "personal" => {
+   const getCurrentTab = ():
+      | "activities"
+      | "artworks"
+      | "portfolio"
+      | "products"
+      | "personal" => {
       if (tab === "artworks") return "artworks";
       if (tab === "portfolio") return "portfolio";
+      if (tab === "products") return "products";
       if (tab === "personal") return "personal";
       return "activities";
    };
@@ -24,7 +38,7 @@ export const Dashboard: React.FC = () => {
    const activeTab = getCurrentTab();
 
    const handleTabChange = (
-      newTab: "activities" | "artworks" | "portfolio" | "personal",
+      newTab: "activities" | "artworks" | "portfolio" | "products" | "personal",
    ) => {
       if (newTab === "activities") {
          navigate("/dashboard");
@@ -90,6 +104,19 @@ export const Dashboard: React.FC = () => {
                      </div>
                   </button>
                   <button
+                     onClick={() => handleTabChange("products")}
+                     className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                        activeTab === "products"
+                           ? "border-primary text-primary"
+                           : "border-transparent text-muted-foreground hover:text-foreground"
+                     }`}
+                  >
+                     <div className="flex items-center space-x-2">
+                        <Package className="w-5 h-5" />
+                        <span>Products</span>
+                     </div>
+                  </button>
+                  <button
                      onClick={() => handleTabChange("personal")}
                      className={`py-4 px-1 border-b-2 font-medium text-sm ${
                         activeTab === "personal"
@@ -110,6 +137,7 @@ export const Dashboard: React.FC = () => {
             {activeTab === "activities" && <ActivitySection />}
             {activeTab === "artworks" && <ArtworkSection />}
             {activeTab === "portfolio" && <PortfolioSection />}
+            {activeTab === "products" && <ProductSection />}
             {activeTab === "personal" && <PersonalSection />}
          </Container>
       </div>

@@ -97,7 +97,7 @@ export const DropImage = ({
             {...getRootProps()}
             className={`border-2 border-dashed p-4 text-center ${customTailwind} ${
                isDisabled
-                  ? "cursor-not-allowed border-gray-200 bg-gray-50"
+                  ? "cursor-not-allowed border-gray-200 dark:border-gray-200/50 bg-gray-50 dark:bg-gray-50/20"
                   : `cursor-pointer ${
                        isDragActive
                           ? "border-blue-400 bg-blue-50/50"

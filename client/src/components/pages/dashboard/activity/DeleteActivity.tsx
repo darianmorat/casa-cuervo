@@ -14,7 +14,6 @@ export const DeleteActivity = ({ activityId, closeForm }: DeleteActivityProps) =
    return (
       <Modal onClose={closeForm}>
          <div className="relative bg-background dark:bg-card p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold">Eliminar actividad</h3>
             <p>Esta seguro de que desea remover esta actividad?</p>
             <Button
                type="button"

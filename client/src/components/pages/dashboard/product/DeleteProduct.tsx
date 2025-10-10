@@ -1,20 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/Modal";
-import { useArtworkStore } from "@/stores/useArtworkStore";
+import { useProductStore } from "@/stores/useProductStore";
 import { X } from "lucide-react";
 
-type DeleteArtworkProps = {
-   artworkId: string;
+type DeleteProductProps = {
+   productId: string;
    closeForm: () => void;
 };
 
-export const DeleteArtwork = ({ artworkId, closeForm }: DeleteArtworkProps) => {
-   const { deleteArtwork } = useArtworkStore();
+export const DeleteProduct = ({ productId, closeForm }: DeleteProductProps) => {
+   const { deleteProduct } = useProductStore();
 
    return (
       <Modal onClose={closeForm}>
          <div className="relative bg-background dark:bg-card p-6 w-full max-w-md">
-            <p>Esta seguro de que desea remover esta obra?</p>
+            <p>Esta seguro de que desea remover este producto?</p>
             <Button
                type="button"
                variant={"ghost"}
@@ -26,7 +26,7 @@ export const DeleteArtwork = ({ artworkId, closeForm }: DeleteArtworkProps) => {
             <div className="flex gap-2 pt-4">
                <Button
                   onClick={() => {
-                     deleteArtwork(artworkId);
+                     deleteProduct(productId);
                      closeForm();
                   }}
                   className="flex-1"

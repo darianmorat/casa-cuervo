@@ -37,17 +37,14 @@ export const usePortfolioStore = create<Store>((set, get) => ({
    uploadImage: async (position: string, file: File) => {
       set({ isLoading: true });
       try {
-         // Get Cloudinary signature
          const resImg = await api.get("/asset/generate-signature");
 
-         // Prepare form data for Cloudinary
          const formData = new FormData();
          formData.append("file", file);
          formData.append("api_key", resImg.data.apiKey);
          formData.append("timestamp", resImg.data.timestamp);
          formData.append("signature", resImg.data.signature);
 
-         // Upload to Cloudinary
          const cloudName = resImg.data.cloudName;
          const cloudRes = await fetch(
             `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
@@ -63,7 +60,6 @@ export const usePortfolioStore = create<Store>((set, get) => ({
 
          const uploadedData = await cloudRes.json();
 
-         // Save metadata to your backend
          if (uploadedData.secure_url) {
             await api.post("/asset/save-metadata", {
                public_id: uploadedData.public_id,
@@ -72,7 +68,6 @@ export const usePortfolioStore = create<Store>((set, get) => ({
             });
          }
 
-         // Save/update portfolio image
          const res = await api.post("/portfolio/upload", {
             id: position,
             image: uploadedData.secure_url,
@@ -81,12 +76,10 @@ export const usePortfolioStore = create<Store>((set, get) => ({
          if (res.data.success) {
             toast.success("Imagen subida exitosamente");
 
-            // Update local state
             const currentImages = get().images;
             const existingIndex = currentImages.findIndex((img) => img.id === position);
 
             if (existingIndex >= 0) {
-               // Update existing
                const updatedImages = [...currentImages];
                updatedImages[existingIndex] = {
                   id: position,
@@ -94,7 +87,6 @@ export const usePortfolioStore = create<Store>((set, get) => ({
                };
                set({ images: updatedImages });
             } else {
-               // Add new
                set({
                   images: [
                      ...currentImages,
@@ -124,11 +116,9 @@ export const usePortfolioStore = create<Store>((set, get) => ({
             const currentImages = get().images;
             const imageToDelete = currentImages.find((img) => img.id === id);
 
-            // Remove from state
             const updatedImages = currentImages.filter((img) => img.id !== id);
             set({ images: updatedImages });
 
-            // Delete from Cloudinary
             if (imageToDelete?.image) {
                await get().deleteAsset(imageToDelete.image);
             }

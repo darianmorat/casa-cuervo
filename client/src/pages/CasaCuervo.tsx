@@ -6,7 +6,7 @@ import { ZoneSection } from "@/components/pages/casa-cuervo/ZoneSection";
 
 export const CasaCuervo = () => {
    return (
-      <>
+      <div className="animate-in fade-in duration-400">
          <HeroSection />
          <ActivitySection />
          <GallerySection />
@@ -20,6 +20,6 @@ export const CasaCuervo = () => {
                </p>
             </div>
          </footer>
-      </>
+      </div>
    );
 };
