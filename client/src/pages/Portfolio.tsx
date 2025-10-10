@@ -475,7 +475,7 @@ export const Portfolio = () => {
          ) : (
             <div className="space-y-12">
                {categoriesProduct.map((category) => {
-                  const categoryProducts = artworks.filter(
+                  const categoryProducts = products.filter(
                      (product) => product.category === category,
                   );
 
