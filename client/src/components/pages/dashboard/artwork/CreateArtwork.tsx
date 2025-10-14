@@ -17,12 +17,13 @@ import {
 import type { UseFormReturn } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/Modal";
-import { Save, X } from "lucide-react";
+import { LoaderCircle, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import type { ArtworkFormData } from "./ArtworkSchema";
 import { DropImage } from "@/components/ui/DropZone";
 import { useEffect, useState } from "react";
+import { useArtworkStore } from "@/stores/useArtworkStore";
 
 interface FileWithPreview extends File {
    preview: string;
@@ -41,13 +42,15 @@ export const CreateArtwork = ({
    closeForm,
 }: CreateArtworkProps) => {
    const [files, setFiles] = useState<FileWithPreview[]>([]);
+   const { isLoading } = useArtworkStore();
 
    useEffect(() => {
       if (files.length > 0) {
-         artworkForm.setValue("image", files[0].name);
-         artworkForm.clearErrors("image");
+         const imageUrls = files.map((file) => file.name);
+         artworkForm.setValue("images", imageUrls);
+         artworkForm.clearErrors("images");
       } else {
-         artworkForm.setValue("image", "");
+         artworkForm.setValue("images", []);
       }
    }, [files, artworkForm]);
 
@@ -142,18 +145,17 @@ export const CreateArtwork = ({
 
                   <FormField
                      control={artworkForm.control}
-                     name="image"
+                     name="images"
                      render={() => (
                         <FormItem>
                            <FormLabel>Subir Imagen</FormLabel>
                            <FormControl>
-                              <DropImage files={files} setFiles={setFiles} maxFiles={1} />
+                              <DropImage files={files} setFiles={setFiles} maxFiles={5} />
                            </FormControl>
                            <FormMessage />
                         </FormItem>
                      )}
                   />
-
 
                   <FormField
                      control={artworkForm.control}
@@ -217,15 +219,16 @@ export const CreateArtwork = ({
                      )}
                   />
 
-                  <div className="flex gap-2 pt-4">
-                     <Button type="submit" className="flex-1">
-                        <Save className="w-4 h-4 mr-2" /> Guardar
+                  <div className="grid grid-cols-2 gap-2 pt-4">
+                     <Button type="submit" disabled={isLoading}>
+                        {isLoading && <LoaderCircle className="animate-spin" />}
+                        {isLoading ? "Guardando" : "Guardar"}
                      </Button>
                      <Button
                         type="button"
                         onClick={closeForm}
+                        disabled={isLoading}
                         variant={"outline"}
-                        className="flex-1"
                      >
                         Cancelar
                      </Button>

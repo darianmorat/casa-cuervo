@@ -176,16 +176,11 @@ export const CreateActivity = ({
                      )}
                   />
 
-                  <div className="flex gap-2 pt-4">
-                     <Button type="submit" className="flex-1">
+                  <div className="grid grid-cols-2 gap-2 pt-4">
+                     <Button type="submit">
                         <Save className="w-4 h-4 mr-2" /> Guardar
                      </Button>
-                     <Button
-                        type="button"
-                        onClick={closeForm}
-                        variant={"outline"}
-                        className="flex-1"
-                     >
+                     <Button type="button" onClick={closeForm} variant={"outline"}>
                         Cancelar
                      </Button>
                   </div>

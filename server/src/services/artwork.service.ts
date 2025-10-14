@@ -16,12 +16,21 @@ export const artworkService = {
       price: string,
       size: string,
       year: string,
-      image: string,
+      images: string,
       available: boolean,
    ) => {
       const [result] = await db
          .insert(artworks)
-         .values({ title, category, technique, price, size, year, image, available })
+         .values({
+            title,
+            category,
+            technique,
+            price,
+            size,
+            year,
+            images,
+            available,
+         })
          .returning();
 
       return result;
@@ -35,12 +44,12 @@ export const artworkService = {
       price: string,
       size: string,
       year: string,
-      image: string,
+      images: string,
       available: boolean,
    ) => {
       const [result] = await db
          .update(artworks)
-         .set({ title, category, technique, price, size, year, image, available })
+         .set({ title, category, technique, price, size, year, images, available })
          .where(eq(artworks.id, id))
          .returning();
 

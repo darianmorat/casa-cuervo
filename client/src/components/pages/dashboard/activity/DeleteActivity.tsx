@@ -23,17 +23,16 @@ export const DeleteActivity = ({ activityId, closeForm }: DeleteActivityProps) =
             >
                <X className="w-6 h-6" />
             </Button>
-            <div className="flex gap-2 pt-4">
+            <div className="grid grid-cols-2 gap-2 pt-4">
                <Button
                   onClick={() => {
                      deleteActivity(activityId);
                      closeForm();
                   }}
-                  className="flex-1"
                >
                   Confirmar
                </Button>
-               <Button variant={"outline"} onClick={closeForm} className="flex-1">
+               <Button variant={"outline"} onClick={closeForm}>
                   Cancelar
                </Button>
             </div>

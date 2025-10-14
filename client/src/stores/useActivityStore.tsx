@@ -200,11 +200,12 @@ export const useActivityStore = create<Store>((set, get) => ({
          }
       } catch (error) {
          toast.error(error.response.data.message);
+      } finally {
+         set({ isLoading: false });
       }
    },
 
    deleteAsset: async (url) => {
-      set({ isLoading: true });
       try {
          const urlParts = url.split("/");
          const filename = urlParts[urlParts.length - 1];

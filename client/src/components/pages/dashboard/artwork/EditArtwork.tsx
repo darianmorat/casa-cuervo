@@ -18,7 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, type UseFormReturn } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/Modal";
-import { Save, X } from "lucide-react";
+import { LoaderCircle, X } from "lucide-react";
 import { artworkSchema, type ArtworkFormData } from "./ArtworkSchema";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
@@ -44,8 +44,8 @@ export const EditArtwork = ({
    closeForm,
 }: EditArtworkProps) => {
    const [files, setFiles] = useState<FileWithPreview[]>([]);
-   const [isExistingImageDeleted, setIsExistingImageDeleted] = useState(false);
-   const { deleteAsset } = useArtworkStore();
+   const [existingImages, setExistingImages] = useState<string[]>(artwork.images);
+   const { isLoading, deleteAsset } = useArtworkStore();
 
    const artworkForm = useForm({
       resolver: zodResolver(artworkSchema),
@@ -56,37 +56,55 @@ export const EditArtwork = ({
          price: artwork.price,
          size: artwork.size,
          year: artwork.year,
-         image: artwork.image,
+         images: artwork.images,
          available: artwork.available,
       },
    });
 
    useEffect(() => {
-      if (files.length > 0) {
-         artworkForm.setValue("image", files[0].name);
-         artworkForm.clearErrors("image");
-      } else if (isExistingImageDeleted) {
-         artworkForm.setValue("image", "");
-      } else {
-         artworkForm.setValue("image", artwork.image);
-      }
-   }, [files, isExistingImageDeleted, artworkForm, artwork.image]);
+      const totalImages = existingImages.length + files.length;
 
-   const handleMarkExistingImageForDeletion = () => {
-      setIsExistingImageDeleted(true);
+      if (totalImages > 0) {
+         artworkForm.clearErrors("images");
+      } else {
+         artworkForm.setError("images", {
+            message: "Al menos una imagen es requerida",
+         });
+      }
+   }, [files, existingImages, artworkForm]);
+
+   useEffect(() => {
+      return () => {
+         files.forEach((file) => URL.revokeObjectURL(file.preview));
+      };
+   }, [files]);
+
+   const removeExistingImage = (index: number) => {
+      setExistingImages((prev) => prev.filter((_, i) => i !== index));
    };
 
    const handleFormSubmit = async (data: ArtworkFormData) => {
-      if (files.length > 0 && artwork.image) {
-         await deleteAsset(artwork.image);
+      const deletedImages = artwork.images.filter((img) => !existingImages.includes(img));
+
+      if (deletedImages.length > 0) {
+         await deleteAsset(deletedImages);
       }
 
-      handleEditArtwork(data, files);
+      const remainingImages = artwork.images.filter((img) =>
+         existingImages.includes(img),
+      );
+      const updatedData = {
+         ...data,
+         images: remainingImages,
+      };
+
+      handleEditArtwork(updatedData, files);
    };
 
    const handleCancel = () => {
+      files.forEach((file) => URL.revokeObjectURL(file.preview));
       setFiles([]);
-      setIsExistingImageDeleted(false);
+      setExistingImages(artwork.images);
       closeForm();
    };
 
@@ -179,53 +197,58 @@ export const EditArtwork = ({
 
                   <FormField
                      control={artworkForm.control}
-                     name="image"
+                     name="images"
                      render={() => (
                         <FormItem>
-                           <FormLabel>Subir Imagen</FormLabel>
+                           <FormLabel>
+                              Subir Imagen{" "}
+                              <p className="text-sm font-normal text-muted-foreground">
+                                 (max 5)
+                              </p>
+                           </FormLabel>
                            <FormControl>
-                              <DropImage files={files} setFiles={setFiles} maxFiles={1} />
+                              <DropImage files={files} setFiles={setFiles} maxFiles={5} />
                            </FormControl>
                            <FormMessage />
                         </FormItem>
                      )}
                   />
-                  <div className="">
-                     {files.length > 0
-                        ? null
-                        : !isExistingImageDeleted &&
-                          artwork.image && (
-                             <>
-                                <div className="space-y-4 pt-1">
-                                   <p className="text-sm -mt-1 flex gap-2">
-                                      <span className="font-semibold">
-                                         Imagen actual:
-                                      </span>
-                                      <span className="text-muted-foreground">
-                                         (max 1)
-                                      </span>
-                                   </p>
 
-                                   <div className="flex flex-row gap-3 flex-wrap justify-center bg-accent p-5">
-                                      <div className="h-30 w-30 relative group bg-accent">
-                                         <img
-                                            src={artwork.image}
-                                            className="h-full w-full object-cover border-2 border-black/40"
-                                         />
-                                         <button
-                                            type="button"
-                                            onClick={handleMarkExistingImageForDeletion}
-                                            className="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 flex items-center justify-center text-xs hover:bg-red-400 opacity-0 group-hover:opacity-100 cursor-pointer"
-                                            title="Marcar para eliminar"
-                                         >
-                                            <X size={18} />
-                                         </button>
-                                      </div>
-                                   </div>
-                                </div>
-                             </>
-                          )}
-                  </div>
+                  {existingImages.length > 0 && (
+                     <div className="space-y-4 mb-5">
+                        <p className="text-sm">
+                           <span className="font-semibold tex">
+                              {existingImages.length > 1
+                                 ? "Imágenes actuales"
+                                 : "Imagen actual"}
+                           </span>{" "}
+                           <span className="text-muted-foreground">
+                              ({existingImages.length})
+                           </span>
+                        </p>
+                        <div className="grid grid-cols-3 gap-3 bg-accent p-3">
+                           {existingImages.map((imageUrl, index) => (
+                              <div
+                                 key={imageUrl}
+                                 className="relative group aspect-square"
+                              >
+                                 <img
+                                    src={imageUrl}
+                                    alt={`Existing ${index + 1}`}
+                                    className="w-full h-full object-cover border-2 border-black/40"
+                                 />
+                                 <button
+                                    type="button"
+                                    onClick={() => removeExistingImage(index)}
+                                    className="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 flex items-center justify-center hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                                 >
+                                    <X size={16} />
+                                 </button>
+                              </div>
+                           ))}
+                        </div>
+                     </div>
+                  )}
 
                   <FormField
                      control={artworkForm.control}
@@ -289,15 +312,16 @@ export const EditArtwork = ({
                      )}
                   />
 
-                  <div className="flex gap-2 pt-4">
-                     <Button type="submit" className="flex-1">
-                        <Save className="w-4 h-4 mr-2" /> Guardar
+                  <div className="grid grid-cols-2 gap-2 pt-4">
+                     <Button type="submit" disabled={isLoading}>
+                        {isLoading && <LoaderCircle className="animate-spin" />}
+                        {isLoading ? "Guardando" : "Guardar"}
                      </Button>
                      <Button
                         type="button"
                         onClick={handleCancel}
+                        disabled={isLoading}
                         variant={"outline"}
-                        className="flex-1"
                      >
                         Cancelar
                      </Button>

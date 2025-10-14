@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/Modal";
 import { useArtworkStore } from "@/stores/useArtworkStore";
-import { X } from "lucide-react";
+import { LoaderCircle, X } from "lucide-react";
 
 type DeleteArtworkProps = {
    artworkId: string;
@@ -9,7 +9,12 @@ type DeleteArtworkProps = {
 };
 
 export const DeleteArtwork = ({ artworkId, closeForm }: DeleteArtworkProps) => {
-   const { deleteArtwork } = useArtworkStore();
+   const { isLoading, deleteArtwork } = useArtworkStore();
+
+   const handleDelete = async () => {
+      await deleteArtwork(artworkId);
+      closeForm();
+   };
 
    return (
       <Modal onClose={closeForm}>
@@ -23,17 +28,12 @@ export const DeleteArtwork = ({ artworkId, closeForm }: DeleteArtworkProps) => {
             >
                <X className="w-6 h-6" />
             </Button>
-            <div className="flex gap-2 pt-4">
-               <Button
-                  onClick={() => {
-                     deleteArtwork(artworkId);
-                     closeForm();
-                  }}
-                  className="flex-1"
-               >
-                  Confirmar
+            <div className="grid grid-cols-2 gap-2 pt-4">
+               <Button onClick={() => handleDelete()} disabled={isLoading}>
+                  {isLoading && <LoaderCircle className="animate-spin" />}
+                  {isLoading ? "Eliminando" : "Confirmar"}
                </Button>
-               <Button variant={"outline"} onClick={closeForm} className="flex-1">
+               <Button variant={"outline"} onClick={closeForm} disabled={isLoading}>
                   Cancelar
                </Button>
             </div>

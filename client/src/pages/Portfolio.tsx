@@ -5,7 +5,7 @@ import { useArtworkStore } from "@/stores/useArtworkStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { usePortfolioStore } from "@/stores/usePortfolioStore";
 import { useProductStore } from "@/stores/useProductStore";
-import { ExternalLink, Fullscreen, XCircleIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight, ExternalLink, Fullscreen } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -20,9 +20,13 @@ export const Portfolio = () => {
    const { images, getImages } = usePortfolioStore();
    const { getPhone } = useAuthStore();
 
+   const [selectedImageCarousel, setSelectedImageCarousel] = useState<string[] | null>(
+      null,
+   );
    const [selectedImage, setSelectedImage] = useState<Image | null>(null);
    const [categoriesObras, setCategoriesObras] = useState<string[]>([]);
    const [categoriesProduct, setCategoriesProduct] = useState<string[]>([]);
+   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
    const handleBuyBtn = async (artTitle: string) => {
       const phone = await getPhone();
@@ -62,6 +66,16 @@ export const Portfolio = () => {
       getImages();
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
+
+   const nextImage = (e: React.MouseEvent, totalImages: number) => {
+      e.stopPropagation();
+      setCurrentImageIndex((prev) => (prev + 1) % totalImages);
+   };
+
+   const prevImage = (e: React.MouseEvent, totalImages: number) => {
+      e.stopPropagation();
+      setCurrentImageIndex((prev) => (prev - 1 + totalImages) % totalImages);
+   };
 
    const renderGallery = () => (
       <div className="animate-in fade-in duration-400">
@@ -381,13 +395,37 @@ export const Portfolio = () => {
                                  >
                                     <div className="relative overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500">
                                        <img
-                                          src={artwork.image}
-                                          alt={artwork.title}
+                                          src={artwork.images[currentImageIndex]}
+                                          alt={`${artwork.title} - Image ${currentImageIndex + 1}`}
                                           className="w-full h-100 object-cover transition-transform duration-500 group-hover:scale-110"
                                        />
+
+                                       {artwork.images.length > 1 && (
+                                          <>
+                                             <button
+                                                onClick={(e) =>
+                                                   prevImage(e, artwork.images.length)
+                                                }
+                                                className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                             >
+                                                <ChevronLeft size={24} />
+                                             </button>
+                                             <button
+                                                onClick={(e) =>
+                                                   nextImage(e, artwork.images.length)
+                                                }
+                                                className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                             >
+                                                <ChevronRight size={24} />
+                                             </button>
+                                          </>
+                                       )}
+
                                        <Fullscreen
                                           size={25}
-                                          onClick={() => setSelectedImage(artwork)}
+                                          onClick={() =>
+                                             setSelectedImageCarousel(artwork.images)
+                                          }
                                           className="absolute z-10 bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
                                        />
 
@@ -413,7 +451,26 @@ export const Portfolio = () => {
                                        </div>
                                     )}
 
-                                    <div className="space-y-3 p-4 bg-gradient-to-b from-muted/90 to-muted/10 border-x border-b border-foreground/10 flex-1 flex flex-col">
+                                    <div className="relative space-y-3 p-4 bg-gradient-to-b from-muted/90 to-muted/10 border-x border-b border-foreground/10 flex-1 flex flex-col">
+                                       <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+                                          {artwork.images.map((_, index) => (
+                                             <button
+                                                key={index}
+                                                onClick={(e) => {
+                                                   e.stopPropagation();
+                                                   setCurrentImageIndex(index);
+                                                }}
+                                                className={`w-2 h-2 rounded-full transition-all ${
+                                                   index === currentImageIndex
+                                                      ? "bg-black/80 w-6 dark:bg-white"
+                                                      : "bg-black/50 dark:bg-white/50 hover:bg-black/75 black:hover:bg-white/75"
+                                                }`}
+                                             />
+                                          ))}
+                                       </div>
+
+                                       <hr className="mt-6" />
+
                                        <div className="text-sm text-muted-foreground mb-4 flex-1">
                                           {artwork.technique}
                                        </div>
@@ -576,15 +633,49 @@ export const Portfolio = () => {
             </div>
          </footer>
 
+         {selectedImageCarousel && (
+            <Modal
+               onClose={() => setSelectedImageCarousel(null)}
+               className="backdrop-blur-sm"
+            >
+               {selectedImageCarousel.length > 1 && (
+                  <>
+                     <button
+                        onClick={(e) => prevImage(e, selectedImageCarousel.length)}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full"
+                     >
+                        <ChevronLeft size={24} />
+                     </button>
+                     <button
+                        onClick={(e) => nextImage(e, selectedImageCarousel.length)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full"
+                     >
+                        <ChevronRight size={24} />
+                     </button>
+                  </>
+               )}
+
+               <div className="relative max-w-7xl max-h-[90vh] m-4">
+                  <img
+                     src={selectedImageCarousel[currentImageIndex]}
+                     alt={`Image ${currentImageIndex + 1}`}
+                     className="max-w-full max-h-[85vh] object-contain"
+                  />
+               </div>
+
+               <div className="absolute bottom-5 text-white text-lg">
+                  {currentImageIndex + 1}/{selectedImageCarousel.length}
+               </div>
+            </Modal>
+         )}
+
          {selectedImage && (
             <Modal onClose={() => setSelectedImage(null)} className="backdrop-blur-sm">
                <div className="relative max-w-7xl max-h-[90vh] m-4">
                   <div
                      className="absolute right-0 top-0 text-white/80 hover:text-white hover:cursor-pointer p-3"
                      onClick={() => setSelectedImage(null)}
-                  >
-                     <XCircleIcon size={30} />
-                  </div>
+                  ></div>
                   <img
                      src={selectedImage.image}
                      className="max-w-full max-h-[85vh] object-contain"

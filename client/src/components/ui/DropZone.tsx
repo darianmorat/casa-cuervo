@@ -131,11 +131,9 @@ export const DropImage = ({
             <div className="space-y-4 pt-1">
                {files.length > 0 && (
                   <>
-                     <p className="text-sm -mt-1 flex gap-2">
-                        <span className="font-semibold">Nueva imagen:</span>
-                        <span className="text-muted-foreground">
-                           (max {maxFiles || "∞"})
-                        </span>
+                     <p className="text-sm font-semibold -mt-1">
+                        {files.length > 1 ? "Imágenes nuevas" : "Nueva imagen"}{" "}
+                        <span className="font-normal text-muted-foreground">({files.length})</span>
                      </p>
 
                      <div className="flex flex-row gap-3 flex-wrap justify-center bg-accent p-5">
