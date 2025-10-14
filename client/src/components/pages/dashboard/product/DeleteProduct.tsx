@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/Modal";
 import { useProductStore } from "@/stores/useProductStore";
-import { X } from "lucide-react";
+import { LoaderCircle, X } from "lucide-react";
 
 type DeleteProductProps = {
    productId: string;
@@ -9,7 +9,12 @@ type DeleteProductProps = {
 };
 
 export const DeleteProduct = ({ productId, closeForm }: DeleteProductProps) => {
-   const { deleteProduct } = useProductStore();
+   const { isLoading, deleteProduct } = useProductStore();
+
+   const handleDelete = async () => {
+      await deleteProduct(productId);
+      closeForm();
+   };
 
    return (
       <Modal onClose={closeForm}>
@@ -24,15 +29,11 @@ export const DeleteProduct = ({ productId, closeForm }: DeleteProductProps) => {
                <X className="w-6 h-6" />
             </Button>
             <div className="grid grid-cols-2 gap-2 pt-4">
-               <Button
-                  onClick={() => {
-                     deleteProduct(productId);
-                     closeForm();
-                  }}
-               >
-                  Confirmar
+               <Button onClick={() => handleDelete()} disabled={isLoading}>
+                  {isLoading && <LoaderCircle className="animate-spin" />}
+                  {isLoading ? "Eliminando" : "Confirmar"}
                </Button>
-               <Button variant={"outline"} onClick={closeForm}>
+               <Button variant={"outline"} onClick={closeForm} disabled={isLoading}>
                   Cancelar
                </Button>
             </div>

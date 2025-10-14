@@ -46,7 +46,7 @@ CREATE TABLE "products" (
 	"price" varchar(255) NOT NULL,
 	"size" varchar(255) NOT NULL,
 	"year" varchar(255) NOT NULL,
-	"image" varchar(255) NOT NULL,
+	"images" jsonb NOT NULL,
 	"available" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );

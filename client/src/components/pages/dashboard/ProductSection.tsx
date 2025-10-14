@@ -11,7 +11,8 @@ import {
    PencilLine,
    HashIcon,
    Fullscreen,
-   XCircleIcon,
+   ChevronLeft,
+   ChevronRight,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Modal } from "@/components/ui/Modal";
@@ -20,11 +21,6 @@ import { productSchema, type ProductFormData } from "./product/ProductSchema";
 import { useProductStore } from "@/stores/useProductStore";
 import { CreateProduct } from "./product/CreateProduct";
 import { DeleteProduct } from "./product/DeleteProduct";
-
-type Image = {
-   id: string;
-   image: string;
-};
 
 interface FileWithPreview extends File {
    preview: string;
@@ -39,7 +35,7 @@ type ShowFormState = {
 };
 
 export const ProductSection = () => {
-   const [selectedImage, setSelectedImage] = useState<Image | null>(null);
+   const [selectedImage, setSelectedImage] = useState<string[] | null>(null);
    const [showForm, setShowForm] = useState<ShowFormState>({ open: false, for: "" });
    const [categories, setCategories] = useState<string[]>([]);
    const { products, getProducts, createProduct, editProduct } = useProductStore();
@@ -63,26 +59,26 @@ export const ProductSection = () => {
          price: "",
          size: "",
          year: "",
-         image: "",
+         images: [],
          available: true,
       },
    });
 
-   const handleCreateProduct = (
+   const handleCreateProduct = async (
       data: z.infer<typeof productSchema>,
       files: FileWithPreview[],
    ) => {
-      createProduct(data, files);
+      await createProduct(data, files);
       closeForm();
    };
 
-   const handleEditProduct = (
+   const handleEditProduct = async (
       data: z.infer<typeof productSchema>,
       files: FileWithPreview[],
    ) => {
       if (!showForm.id) return;
 
-      editProduct(data, files, showForm.id);
+      await editProduct(data, files, showForm.id);
       closeForm();
    };
 
@@ -93,6 +89,18 @@ export const ProductSection = () => {
    const closeForm = () => {
       setShowForm({ open: true, for: "" });
       productForm.reset();
+   };
+
+   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+   const nextImage = (e: React.MouseEvent, totalImages: number) => {
+      e.stopPropagation();
+      setCurrentImageIndex((prev) => (prev + 1) % totalImages);
+   };
+
+   const prevImage = (e: React.MouseEvent, totalImages: number) => {
+      e.stopPropagation();
+      setCurrentImageIndex((prev) => (prev - 1 + totalImages) % totalImages);
    };
 
    return (
@@ -115,7 +123,7 @@ export const ProductSection = () => {
             <div className="space-y-12">
                {categories.map((category) => {
                   const categoryProducts = products.filter(
-                     (artwork) => artwork.category === category,
+                     (product) => product.category === category,
                   );
 
                   return (
@@ -146,19 +154,59 @@ export const ProductSection = () => {
 
                                  <div className="relative overflow-hidden">
                                     <img
-                                       src={product.image}
-                                       alt={product.title}
+                                       src={product.images[currentImageIndex]}
+                                       alt={`${product.title} - Image ${currentImageIndex + 1}`}
                                        className="w-full h-90 object-cover group-hover:scale-105 transition-transform duration-500"
                                     />
+                                    {product.images.length > 1 && (
+                                       <>
+                                          <button
+                                             onClick={(e) =>
+                                                prevImage(e, product.images.length)
+                                             }
+                                             className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                          >
+                                             <ChevronLeft size={24} />
+                                          </button>
+                                          <button
+                                             onClick={(e) =>
+                                                nextImage(e, product.images.length)
+                                             }
+                                             className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                          >
+                                             <ChevronRight size={24} />
+                                          </button>
+                                       </>
+                                    )}
+
                                     <Fullscreen
                                        size={25}
-                                       onClick={() => setSelectedImage(product)}
+                                       onClick={() => setSelectedImage(product.images)}
                                        className="absolute z-10 bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-200" />
                                  </div>
 
-                                 <div className="p-6 space-y-4 flex-1 flex flex-col">
+                                 <div className="relative p-6 space-y-4 flex-1 flex flex-col">
+                                    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+                                       {product.images.map((_, index) => (
+                                          <button
+                                             key={index}
+                                             onClick={(e) => {
+                                                e.stopPropagation();
+                                                setCurrentImageIndex(index);
+                                             }}
+                                             className={`w-2 h-2 rounded-full transition-all ${
+                                                index === currentImageIndex
+                                                   ? "bg-black/80 w-6 dark:bg-white"
+                                                   : "bg-black/50 dark:bg-white/50 hover:bg-black/75 black:hover:bg-white/75"
+                                             }`}
+                                          />
+                                       ))}
+                                    </div>
+
+                                    <hr className="mt-4" />
+
                                     <div>
                                        <h3 className="text-xl font-medium text-foreground">
                                           {product.title}
@@ -230,17 +278,33 @@ export const ProductSection = () => {
 
          {selectedImage && (
             <Modal onClose={() => setSelectedImage(null)} className="backdrop-blur-sm">
+               {selectedImage.length > 1 && (
+                  <>
+                     <button
+                        onClick={(e) => prevImage(e, selectedImage.length)}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full"
+                     >
+                        <ChevronLeft size={24} />
+                     </button>
+                     <button
+                        onClick={(e) => nextImage(e, selectedImage.length)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full"
+                     >
+                        <ChevronRight size={24} />
+                     </button>
+                  </>
+               )}
+
                <div className="relative max-w-7xl max-h-[90vh] m-4">
-                  <div
-                     className="absolute right-0 top-0 text-white/80 hover:text-white hover:cursor-pointer p-3"
-                     onClick={() => setSelectedImage(null)}
-                  >
-                     <XCircleIcon size={30} />
-                  </div>
                   <img
-                     src={selectedImage.image}
+                     src={selectedImage[currentImageIndex]}
+                     alt={`Image ${currentImageIndex + 1}`}
                      className="max-w-full max-h-[85vh] object-contain"
                   />
+               </div>
+
+               <div className="absolute bottom-5 text-white text-lg">
+                  {currentImageIndex + 1}/{selectedImage.length}
                </div>
             </Modal>
          )}

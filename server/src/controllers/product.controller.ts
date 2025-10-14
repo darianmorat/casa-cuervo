@@ -19,7 +19,7 @@ export const getProducts = async (_req: Request, res: Response) => {
 
 export const createProduct = async (req: Request, res: Response) => {
    try {
-      const { title, category, technique, price, size, year, image, available } =
+      const { title, category, technique, price, size, year, images, available } =
          req.body;
 
       const product = await productService.create(
@@ -29,7 +29,7 @@ export const createProduct = async (req: Request, res: Response) => {
          price,
          size,
          year,
-         image,
+         images,
          available,
       );
 
@@ -48,7 +48,7 @@ export const createProduct = async (req: Request, res: Response) => {
 
 export const editProduct = async (req: Request, res: Response) => {
    try {
-      const { title, category, technique, price, size, year, image, available } =
+      const { title, category, technique, price, size, year, images, available } =
          req.body;
       const { id } = req.params;
 
@@ -60,7 +60,7 @@ export const editProduct = async (req: Request, res: Response) => {
          price,
          size,
          year,
-         image,
+         images,
          available,
       );
 

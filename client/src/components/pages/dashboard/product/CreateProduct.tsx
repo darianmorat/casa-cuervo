@@ -17,12 +17,13 @@ import {
 import type { UseFormReturn } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/Modal";
-import { Save, X } from "lucide-react";
+import { LoaderCircle, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { DropImage } from "@/components/ui/DropZone";
 import { useEffect, useState } from "react";
 import type { ProductFormData } from "./ProductSchema";
+import { useProductStore } from "@/stores/useProductStore";
 
 interface FileWithPreview extends File {
    preview: string;
@@ -41,14 +42,15 @@ export const CreateProduct = ({
    closeForm,
 }: CreateProductProps) => {
    const [files, setFiles] = useState<FileWithPreview[]>([]);
+   const { isLoading } = useProductStore();
 
-   // Add useEffect to update form field when files change
    useEffect(() => {
       if (files.length > 0) {
-         productForm.setValue("image", files[0].name);
-         productForm.clearErrors("image");
+         const imageUrls = files.map((file) => file.name);
+         productForm.setValue("images", imageUrls);
+         productForm.clearErrors("images");
       } else {
-         productForm.setValue("image", "");
+         productForm.setValue("images", []);
       }
    }, [files, productForm]);
 
@@ -130,10 +132,9 @@ export const CreateProduct = ({
                                  </SelectTrigger>
                               </FormControl>
                               <SelectContent className="z-99">
-                                 {/* cambiar esto */}
-                                 <SelectItem value="pintura">Camisetas</SelectItem>
-                                 <SelectItem value="mural">Tote bag</SelectItem>
-                                 <SelectItem value="grabado">Otro</SelectItem>
+                                 <SelectItem value="camisetas">Camisetas</SelectItem>
+                                 <SelectItem value="bolsas">Tote bag</SelectItem>
+                                 <SelectItem value="otro">Otro</SelectItem>
                               </SelectContent>
                            </Select>
                            <FormMessage />
@@ -143,12 +144,12 @@ export const CreateProduct = ({
 
                   <FormField
                      control={productForm.control}
-                     name="image"
+                     name="images"
                      render={() => (
                         <FormItem>
                            <FormLabel>Subir Imagen</FormLabel>
                            <FormControl>
-                              <DropImage files={files} setFiles={setFiles} maxFiles={1} />
+                              <DropImage files={files} setFiles={setFiles} maxFiles={5} />
                            </FormControl>
                            <FormMessage />
                         </FormItem>
@@ -218,10 +219,16 @@ export const CreateProduct = ({
                   />
 
                   <div className="grid grid-cols-2 gap-2 pt-4">
-                     <Button type="submit">
-                        <Save className="w-4 h-4 mr-2" /> Guardar
+                     <Button type="submit" disabled={isLoading}>
+                        {isLoading && <LoaderCircle className="animate-spin" />}
+                        {isLoading ? "Guardando" : "Guardar"}
                      </Button>
-                     <Button type="button" onClick={closeForm} variant={"outline"}>
+                     <Button
+                        type="button"
+                        onClick={closeForm}
+                        disabled={isLoading}
+                        variant={"outline"}
+                     >
                         Cancelar
                      </Button>
                   </div>

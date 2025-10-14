@@ -10,7 +10,7 @@ type Merch = {
    price: string;
    size: string;
    year: string;
-   image: string;
+   images: string[];
    available: boolean;
 };
 
@@ -21,7 +21,7 @@ type CreateProps = {
    price: string;
    size: string;
    year: string;
-   image: string;
+   images: string[];
    available: boolean;
 };
 
@@ -32,7 +32,7 @@ type Store = {
    createProduct: (values: CreateProps, files: File[]) => Promise<void>;
    editProduct: (values: CreateProps, files: File[], id: string) => Promise<void>;
    deleteProduct: (id: string) => Promise<void>;
-   deleteAsset: (url: string) => Promise<boolean | void>;
+   deleteAsset: (urls: string[]) => Promise<boolean | void>;
 };
 
 export const useProductStore = create<Store>((set, get) => ({
@@ -56,36 +56,41 @@ export const useProductStore = create<Store>((set, get) => ({
    createProduct: async (values, files) => {
       set({ isLoading: true });
       try {
-         const resImg = await api.get("/asset/generate-signature");
-         const file = files[0];
+         const srcProducts = [];
 
-         const formData = new FormData();
-         formData.append("file", file);
-         formData.append("api_key", resImg.data.apiKey);
-         formData.append("timestamp", resImg.data.timestamp);
-         formData.append("signature", resImg.data.signature);
+         for (const file of files) {
+            const resImg = await api.get("/asset/generate-signature");
 
-         const cloudName = resImg.data.cloudName;
-         const cloudRes = await fetch(
-            `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
-            {
-               method: "POST",
-               body: formData,
-            },
-         );
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("api_key", resImg.data.apiKey);
+            formData.append("timestamp", resImg.data.timestamp);
+            formData.append("signature", resImg.data.signature);
 
-         if (!cloudRes.ok) {
-            throw new Error();
-         }
+            const cloudName = resImg.data.cloudName;
+            const cloudRes = await fetch(
+               `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
+               {
+                  method: "POST",
+                  body: formData,
+               },
+            );
 
-         const uploadedData = await cloudRes.json();
+            if (!cloudRes.ok) {
+               throw new Error();
+            }
 
-         if (uploadedData.secure_url) {
-            await api.post("/asset/save-metadata", {
-               public_id: uploadedData.public_id,
-               secure_url: uploadedData.secure_url,
-               resource_type: uploadedData.resource_type,
-            });
+            const uploadedData = await cloudRes.json();
+
+            if (uploadedData.secure_url) {
+               await api.post("/asset/save-metadata", {
+                  public_id: uploadedData.public_id,
+                  secure_url: uploadedData.secure_url,
+                  resource_type: uploadedData.resource_type,
+               });
+            }
+
+            srcProducts.push(uploadedData.secure_url);
          }
 
          const body = {
@@ -95,7 +100,7 @@ export const useProductStore = create<Store>((set, get) => ({
             price: values.price,
             size: values.size,
             year: values.year,
-            image: uploadedData.secure_url,
+            images: srcProducts,
             available: values.available,
          };
 
@@ -117,9 +122,9 @@ export const useProductStore = create<Store>((set, get) => ({
    editProduct: async (values, files, id) => {
       set({ isLoading: true });
       try {
-         let imageUrl = values.image;
+         const imagesUrls = [...values.images];
 
-         if (files.length >= 1) {
+         if (files.length > 0) {
             const resImg = await api.get("/asset/generate-signature");
             const file = files[0];
 
@@ -151,7 +156,7 @@ export const useProductStore = create<Store>((set, get) => ({
                   resource_type: uploadedData.resource_type,
                });
 
-               imageUrl = uploadedData.secure_url;
+               imagesUrls.push(uploadedData.secure_url);
             }
          }
 
@@ -162,7 +167,7 @@ export const useProductStore = create<Store>((set, get) => ({
             price: values.price,
             size: values.size,
             year: values.year,
-            image: imageUrl,
+            images: imagesUrls,
             available: values.available,
          };
 
@@ -196,8 +201,8 @@ export const useProductStore = create<Store>((set, get) => ({
             const updatedProducts = currentProduct.filter((product) => product.id !== id);
             set({ products: updatedProducts });
 
-            if (res.data.product.image) {
-               get().deleteAsset(res.data.product.image);
+            if (res.data.product.images) {
+               get().deleteAsset(res.data.product.images);
             }
          }
       } catch (error) {
@@ -207,17 +212,17 @@ export const useProductStore = create<Store>((set, get) => ({
       }
    },
 
-   deleteAsset: async (url) => {
+   deleteAsset: async (urls) => {
       try {
-         const urlParts = url.split("/");
-         const filename = urlParts[urlParts.length - 1];
-         const publicId = filename.split(".")[0];
+         const deletePromises = urls.map(async (url) => {
+            const urlParts = url.split("/");
+            const filename = urlParts[urlParts.length - 1];
+            const publicId = filename.split(".")[0];
+            return api.delete(`/asset/delete/${publicId}`);
+         });
 
-         const res = await api.delete(`/asset/delete/${publicId}`);
-
-         if (res.data.success) {
-            return true;
-         }
+         await Promise.all(deletePromises);
+         return true;
       } catch (error) {
          toast.error(error.response.data.message);
       }

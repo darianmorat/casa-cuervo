@@ -23,6 +23,7 @@ export const Portfolio = () => {
    const [selectedImageCarousel, setSelectedImageCarousel] = useState<string[] | null>(
       null,
    );
+
    const [selectedImage, setSelectedImage] = useState<Image | null>(null);
    const [categoriesObras, setCategoriesObras] = useState<string[]>([]);
    const [categoriesProduct, setCategoriesProduct] = useState<string[]>([]);
@@ -525,7 +526,7 @@ export const Portfolio = () => {
             <div className="w-24 h-px bg-gradient-to-r from-transparent via-foreground/40 to-transparent mx-auto" />
          </div>
 
-         {artworks.length <= 0 ? (
+         {products.length <= 0 ? (
             <div className="text-center text-muted-foreground">
                Upps! Parece que no hay items
             </div>
@@ -550,13 +551,37 @@ export const Portfolio = () => {
                                  >
                                     <div className="relative overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500">
                                        <img
-                                          src={product.image}
-                                          alt={product.title}
+                                          src={product.images[currentImageIndex]}
+                                          alt={`${product.title} - Image ${currentImageIndex + 1}`}
                                           className="w-full h-100 object-cover transition-transform duration-500 group-hover:scale-110"
                                        />
+
+                                       {product.images.length > 1 && (
+                                          <>
+                                             <button
+                                                onClick={(e) =>
+                                                   prevImage(e, product.images.length)
+                                                }
+                                                className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                             >
+                                                <ChevronLeft size={24} />
+                                             </button>
+                                             <button
+                                                onClick={(e) =>
+                                                   nextImage(e, product.images.length)
+                                                }
+                                                className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                             >
+                                                <ChevronRight size={24} />
+                                             </button>
+                                          </>
+                                       )}
+
                                        <Fullscreen
                                           size={25}
-                                          onClick={() => setSelectedImage(product)}
+                                          onClick={() =>
+                                             setSelectedImageCarousel(product.images)
+                                          }
                                           className="absolute z-10 bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
                                        />
 
@@ -582,7 +607,26 @@ export const Portfolio = () => {
                                        </div>
                                     )}
 
-                                    <div className="space-y-3 p-4 bg-gradient-to-b from-muted/90 to-muted/10 border-x border-b border-foreground/10 flex-1 flex flex-col">
+                                    <div className="relative space-y-3 p-4 bg-gradient-to-b from-muted/90 to-muted/10 border-x border-b border-foreground/10 flex-1 flex flex-col">
+                                       <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+                                          {product.images.map((_, index) => (
+                                             <button
+                                                key={index}
+                                                onClick={(e) => {
+                                                   e.stopPropagation();
+                                                   setCurrentImageIndex(index);
+                                                }}
+                                                className={`w-2 h-2 rounded-full transition-all ${
+                                                   index === currentImageIndex
+                                                      ? "bg-black/80 w-6 dark:bg-white"
+                                                      : "bg-black/50 dark:bg-white/50 hover:bg-black/75 black:hover:bg-white/75"
+                                                }`}
+                                             />
+                                          ))}
+                                       </div>
+
+                                       <hr className="mt-6" />
+
                                        <div className="text-sm text-muted-foreground mb-4 flex-1">
                                           {product.technique}
                                        </div>

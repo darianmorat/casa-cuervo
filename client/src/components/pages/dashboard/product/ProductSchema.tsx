@@ -7,7 +7,7 @@ export const productSchema = z.object({
    price: z.string().min(1, { message: "Precio es requerido" }),
    size: z.string().min(1, { message: "Tamaño es requerido" }),
    year: z.string().min(1, { message: "Año es requerido" }),
-   image: z.string().nonempty({ message: "Imagen requerida" }),
+   images: z.array(z.string()).min(1, { message: "Al menos una imagen es requerida" }),
    available: z.boolean(),
 });
 

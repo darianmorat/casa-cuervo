@@ -16,12 +16,12 @@ export const productService = {
       price: string,
       size: string,
       year: string,
-      image: string,
+      images: string,
       available: boolean,
    ) => {
       const [result] = await db
          .insert(products)
-         .values({ title, category, technique, price, size, year, image, available })
+         .values({ title, category, technique, price, size, year, images, available })
          .returning();
 
       return result;
@@ -35,12 +35,12 @@ export const productService = {
       price: string,
       size: string,
       year: string,
-      image: string,
+      images: string,
       available: boolean,
    ) => {
       const [result] = await db
          .update(products)
-         .set({ title, category, technique, price, size, year, image, available })
+         .set({ title, category, technique, price, size, year, images, available })
          .where(eq(products.id, id))
          .returning();
 

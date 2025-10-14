@@ -18,7 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, type UseFormReturn } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/Modal";
-import { Save, X } from "lucide-react";
+import { LoaderCircle, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useEffect, useState } from "react";
@@ -44,8 +44,8 @@ export const EditProduct = ({
    closeForm,
 }: EditProductProps) => {
    const [files, setFiles] = useState<FileWithPreview[]>([]);
-   const [isExistingImageDeleted, setIsExistingImageDeleted] = useState(false);
-   const { deleteAsset } = useProductStore();
+   const [existingImages, setExistingImages] = useState<string[]>(product.images);
+   const { isLoading, deleteAsset } = useProductStore();
 
    const productForm = useForm({
       resolver: zodResolver(productSchema),
@@ -56,37 +56,49 @@ export const EditProduct = ({
          price: product.price,
          size: product.size,
          year: product.year,
-         image: product.image,
+         images: product.images,
          available: product.available,
       },
    });
 
    useEffect(() => {
-      if (files.length > 0) {
-         productForm.setValue("image", files[0].name);
-         productForm.clearErrors("image");
-      } else if (isExistingImageDeleted) {
-         productForm.setValue("image", "");
-      } else {
-         productForm.setValue("image", product.image);
-      }
-   }, [files, isExistingImageDeleted, productForm, product.image]);
+      const totalImages = existingImages.length + files.length;
 
-   const handleMarkExistingImageForDeletion = () => {
-      setIsExistingImageDeleted(true);
+      if (totalImages > 0) {
+         productForm.clearErrors("images");
+      } else {
+         productForm.setError("images", {
+            message: "Al menos una imagen es requerida",
+         });
+      }
+   }, [files, existingImages, productForm]);
+
+   const removeExistingImage = (index: number) => {
+      setExistingImages((prev) => prev.filter((_, i) => i !== index));
    };
 
    const handleFormSubmit = async (data: ProductFormData) => {
-      if (files.length > 0 && product.image) {
-         await deleteAsset(product.image);
+      const deletedImages = product.images.filter((img) => !existingImages.includes(img));
+
+      if (deletedImages.length > 0) {
+         await deleteAsset(deletedImages);
       }
 
-      handleEditProduct(data, files);
+      const remainingImages = product.images.filter((img) =>
+         existingImages.includes(img),
+      );
+      const updatedData = {
+         ...data,
+         images: remainingImages,
+      };
+
+      handleEditProduct(updatedData, files);
    };
 
    const handleCancel = () => {
+      files.forEach((file) => URL.revokeObjectURL(file.preview));
       setFiles([]);
-      setIsExistingImageDeleted(false);
+      setExistingImages(product.images);
       closeForm();
    };
 
@@ -166,10 +178,9 @@ export const EditProduct = ({
                                  </SelectTrigger>
                               </FormControl>
                               <SelectContent className="z-99">
-                                 {/* cambiar esto */}
-                                 <SelectItem value="pintura">Camisetas</SelectItem>
-                                 <SelectItem value="mural">Tote bag</SelectItem>
-                                 <SelectItem value="grabado">Otro</SelectItem>
+                                 <SelectItem value="camisetas">Camisetas</SelectItem>
+                                 <SelectItem value="bolsas">Tote bag</SelectItem>
+                                 <SelectItem value="otro">Otro</SelectItem>
                               </SelectContent>
                            </Select>
                            <FormMessage />
@@ -179,53 +190,53 @@ export const EditProduct = ({
 
                   <FormField
                      control={productForm.control}
-                     name="image"
+                     name="images"
                      render={() => (
                         <FormItem>
                            <FormLabel>Subir Imagen</FormLabel>
                            <FormControl>
-                              <DropImage files={files} setFiles={setFiles} maxFiles={1} />
+                              <DropImage files={files} setFiles={setFiles} maxFiles={5} />
                            </FormControl>
                            <FormMessage />
                         </FormItem>
                      )}
                   />
-                  <div className="">
-                     {files.length > 0
-                        ? null
-                        : !isExistingImageDeleted &&
-                          product.image && (
-                             <>
-                                <div className="space-y-4 pt-1">
-                                   <p className="text-sm -mt-1 flex gap-2">
-                                      <span className="font-semibold">
-                                         Imagen actual:
-                                      </span>
-                                      <span className="text-muted-foreground">
-                                         (max 1)
-                                      </span>
-                                   </p>
 
-                                   <div className="flex flex-row gap-3 flex-wrap justify-center bg-accent p-5">
-                                      <div className="h-30 w-30 relative group bg-accent">
-                                         <img
-                                            src={product.image}
-                                            className="h-full w-full object-cover border-2 border-black/40"
-                                         />
-                                         <button
-                                            type="button"
-                                            onClick={handleMarkExistingImageForDeletion}
-                                            className="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 flex items-center justify-center text-xs hover:bg-red-400 opacity-0 group-hover:opacity-100 cursor-pointer"
-                                            title="Marcar para eliminar"
-                                         >
-                                            <X size={18} />
-                                         </button>
-                                      </div>
-                                   </div>
-                                </div>
-                             </>
-                          )}
-                  </div>
+                  {existingImages.length > 0 && (
+                     <div className="space-y-4 mb-5">
+                        <p className="text-sm">
+                           <span className="font-semibold tex">
+                              {existingImages.length > 1
+                                 ? "Imágenes actuales"
+                                 : "Imagen actual"}
+                           </span>{" "}
+                           <span className="text-muted-foreground">
+                              ({existingImages.length})
+                           </span>
+                        </p>
+                        <div className="grid grid-cols-3 gap-3 bg-accent p-3">
+                           {existingImages.map((imageUrl, index) => (
+                              <div
+                                 key={imageUrl}
+                                 className="relative group aspect-square"
+                              >
+                                 <img
+                                    src={imageUrl}
+                                    alt={`Existing ${index + 1}`}
+                                    className="w-full h-full object-cover border-2 border-black/40"
+                                 />
+                                 <button
+                                    type="button"
+                                    onClick={() => removeExistingImage(index)}
+                                    className="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 flex items-center justify-center hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                                 >
+                                    <X size={16} />
+                                 </button>
+                              </div>
+                           ))}
+                        </div>
+                     </div>
+                  )}
 
                   <FormField
                      control={productForm.control}
@@ -290,10 +301,16 @@ export const EditProduct = ({
                   />
 
                   <div className="grid grid-cols-2 gap-2 pt-4">
-                     <Button type="submit">
-                        <Save className="w-4 h-4 mr-2" /> Guardar
+                     <Button type="submit" disabled={isLoading}>
+                        {isLoading && <LoaderCircle className="animate-spin" />}
+                        {isLoading ? "Guardando" : "Guardar"}
                      </Button>
-                     <Button type="button" onClick={handleCancel} variant={"outline"}>
+                     <Button
+                        type="button"
+                        onClick={handleCancel}
+                        disabled={isLoading}
+                        variant={"outline"}
+                     >
                         Cancelar
                      </Button>
                   </div>
