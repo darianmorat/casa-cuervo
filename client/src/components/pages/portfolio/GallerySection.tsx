@@ -37,9 +37,9 @@ export const GallerySection = () => {
             <div className="text-center mb-10">
                <img
                   src={logo}
-                  className="absolute left-1/2 -translate-x-1/2 -top-10 w-150 mx-auto"
+                  className="absolute left-1/2 -translate-x-1/2 -top-10 w-130 mx-auto"
                />
-               <div className="w-32 h-[2px] mt-60 bg-gradient-to-r from-transparent via-blue-400/60 to-transparent mx-auto mb-6" />
+               <div className="w-32 h-[2px] mt-50 bg-gradient-to-r from-transparent via-blue-400/60 to-transparent mx-auto mb-6" />
             </div>
 
             <div className="flex justify-center gap-8 md:gap-16 mb-12 flex-wrap">
