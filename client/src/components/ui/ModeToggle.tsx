@@ -21,7 +21,7 @@ export function ModeToggle() {
          <Button
             variant="outline"
             size="icon"
-            className="border bg-accent/40 dark:bg-accent/40 hover:bg-accent/60 dark:hover:bg-accent/60 rounded-none"
+            className="border border-black/20 bg-accent/40 dark:bg-accent/40 hover:bg-accent/60 dark:hover:bg-accent/60 rounded-none"
             onClick={() => toggleTheme()}
          >
             <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
