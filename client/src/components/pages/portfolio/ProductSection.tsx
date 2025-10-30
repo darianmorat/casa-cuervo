@@ -5,10 +5,12 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ProductCard } from "./productSection/ProductCard";
+import { Button } from "@/components/ui/button";
 
 export const ProductSection = () => {
    const { products, getProducts } = useProductStore();
    const { getPhone } = useAuthStore();
+   const [activeCategory, setActiveCategory] = useState<string>("");
    const [currentModalImageIndex, setCurrentModalImageIndex] = useState(0);
    const [categoriesProduct, setCategoriesProduct] = useState<string[]>([]);
    const navigate = useNavigate();
@@ -61,6 +63,16 @@ export const ProductSection = () => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
 
+   const handleChangeCategory = (a: string) => {
+      if (activeCategory === a) {
+         setActiveCategory("");
+      } else {
+         setActiveCategory(a);
+      }
+   };
+
+   const categoryToShow = activeCategory === "" ? categoriesProduct : [activeCategory];
+
    return (
       <>
          <div className="animate-in fade-in duration-400">
@@ -79,20 +91,37 @@ export const ProductSection = () => {
                <div className="w-24 h-px bg-gradient-to-r from-transparent via-foreground/40 to-transparent mx-auto" />
             </div>
 
+            <div className="w-full flex justify-end">
+               {categoriesProduct.map((a, i) => (
+                  <Button
+                     key={i}
+                     variant={a === activeCategory ? "default" : "ghost"}
+                     onClick={() => handleChangeCategory(a)}
+                     className="border-y border-black/20 dark:border-white/20 font-normal"
+                  >
+                     {a}
+                  </Button>
+               ))}
+            </div>
+
             {products.length <= 0 ? (
                <div className="text-center text-muted-foreground">
                   Upps! Parece que no hay items
                </div>
             ) : (
                <div className="space-y-12">
-                  {categoriesProduct.map((category) => {
-                     const categoryProducts = products.filter(
-                        (product) => product.category === category,
-                     );
+                  {categoryToShow.map((category) => {
+                     const categoryProducts = products
+                        .filter((product) => product.category === category)
+                        .sort(
+                           (a, b) =>
+                              new Date(b.createdAt).getTime() -
+                              new Date(a.createdAt).getTime(),
+                        );
 
                      return (
                         <div key={category} className="space-y-6">
-                           <h3 className="text-xl font-semibold capitalize border-b border-black/20 pb-2">
+                           <h3 className="text-xl font-semibold capitalize border-b border-black/20 dark:border-white/20 pb-2">
                               {category}
                            </h3>
                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

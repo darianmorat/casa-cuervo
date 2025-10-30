@@ -5,10 +5,12 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArtworkCard } from "./artworkSection/ArworkCard";
+import { Button } from "@/components/ui/button";
 
 export const ArtworkSection = () => {
    const { artworks, getArtworks } = useArtworkStore();
    const { getPhone } = useAuthStore();
+   const [activeCategory, setActiveCategory] = useState<string>("");
    const [categoriesObras, setCategoriesObras] = useState<string[]>([]);
    const [currentModalImageIndex, setCurrentModalImageIndex] = useState(0);
    const navigate = useNavigate();
@@ -61,6 +63,16 @@ export const ArtworkSection = () => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
 
+   const handleChangeCategory = (a: string) => {
+      if (activeCategory === a) {
+         setActiveCategory("");
+      } else {
+         setActiveCategory(a);
+      }
+   };
+
+   const categoryToShow = activeCategory === "" ? categoriesObras : [activeCategory];
+
    return (
       <>
          <div className="animate-in fade-in duration-400">
@@ -79,20 +91,37 @@ export const ArtworkSection = () => {
                <div className="w-24 h-px bg-gradient-to-r from-transparent via-foreground/40 to-transparent mx-auto" />
             </div>
 
+            <div className="w-full flex justify-end">
+               {categoriesObras.map((a, i) => (
+                  <Button
+                     key={i}
+                     variant={a === activeCategory ? "default" : "ghost"}
+                     onClick={() => handleChangeCategory(a)}
+                     className="border-y border-black/20 dark:border-white/20 font-normal"
+                  >
+                     {a}
+                  </Button>
+               ))}
+            </div>
+
             {artworks.length <= 0 ? (
                <div className="text-center text-muted-foreground">
                   Upps! Parece que no hay obras
                </div>
             ) : (
                <div className="space-y-12">
-                  {categoriesObras.map((category) => {
-                     const categoryArtworks = artworks.filter(
-                        (artwork) => artwork.category === category,
-                     );
+                  {categoryToShow.map((category) => {
+                     const categoryArtworks = artworks
+                        .filter((artwork) => artwork.category === category)
+                        .sort(
+                           (a, b) =>
+                              new Date(b.createdAt).getTime() -
+                              new Date(a.createdAt).getTime(),
+                        );
 
                      return (
                         <div key={category} className="space-y-6">
-                           <h3 className="text-xl font-semibold capitalize border-b border-black/20 pb-2">
+                           <h3 className="text-xl font-semibold capitalize border-b border-black/20 dark:border-white/20 pb-2">
                               {category}
                            </h3>
                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

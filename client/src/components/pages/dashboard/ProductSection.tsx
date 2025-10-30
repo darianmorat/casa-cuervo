@@ -117,9 +117,13 @@ export const ProductSection = () => {
          ) : (
             <div className="space-y-12">
                {categories.map((category) => {
-                  const categoryProducts = products.filter(
-                     (product) => product.category === category,
-                  );
+                  const categoryProducts = products
+                     .filter((product) => product.category === category)
+                     .sort(
+                        (a, b) =>
+                           new Date(b.createdAt).getTime() -
+                           new Date(a.createdAt).getTime(),
+                     );
 
                   return (
                      <div key={category} className="space-y-6">

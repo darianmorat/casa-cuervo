@@ -78,19 +78,6 @@ export const Dashboard: React.FC = () => {
                      </div>
                   </button>
                   <button
-                     onClick={() => handleTabChange("artworks")}
-                     className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                        activeTab === "artworks"
-                           ? "border-primary text-primary"
-                           : "border-transparent text-muted-foreground hover:text-foreground"
-                     }`}
-                  >
-                     <div className="flex items-center space-x-2">
-                        <Edit3 className="w-4 h-4" />
-                        <span>Artworks</span>
-                     </div>
-                  </button>
-                  <button
                      onClick={() => handleTabChange("portfolio")}
                      className={`py-4 px-1 border-b-2 font-medium text-sm ${
                         activeTab === "portfolio"
@@ -101,6 +88,19 @@ export const Dashboard: React.FC = () => {
                      <div className="flex items-center space-x-2">
                         <BriefcaseBusiness className="w-5 h-5" />
                         <span>Portfolio</span>
+                     </div>
+                  </button>
+                  <button
+                     onClick={() => handleTabChange("artworks")}
+                     className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                        activeTab === "artworks"
+                           ? "border-primary text-primary"
+                           : "border-transparent text-muted-foreground hover:text-foreground"
+                     }`}
+                  >
+                     <div className="flex items-center space-x-2">
+                        <Edit3 className="w-4 h-4" />
+                        <span>Artworks</span>
                      </div>
                   </button>
                   <button

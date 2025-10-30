@@ -115,9 +115,13 @@ export const ArtworkSection = () => {
          ) : (
             <div className="space-y-12">
                {categories.map((category) => {
-                  const categoryArtworks = artworks.filter(
-                     (artwork) => artwork.category === category,
-                  );
+                  const categoryArtworks = artworks
+                     .filter((artwork) => artwork.category === category)
+                     .sort(
+                        (a, b) =>
+                           new Date(b.createdAt).getTime() -
+                           new Date(a.createdAt).getTime(),
+                     );
 
                   return (
                      <div key={category} className="space-y-6">

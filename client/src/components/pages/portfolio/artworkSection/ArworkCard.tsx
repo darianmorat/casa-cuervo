@@ -84,7 +84,7 @@ export const ArtworkCard = ({ artwork, onImageClick, onBuyClick }: ArtworkCardPr
             </div>
          )}
 
-         <div className="relative space-y-3 p-4 bg-white/50 border-x border-b border-black/20 flex-1 flex flex-col overflow-hidden">
+         <div className="relative space-y-3 p-4 bg-white/50 dark:bg-white/10 border-x border-b border-black/20 dark:border-white/10 flex-1 flex flex-col overflow-hidden">
             <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
                {artwork.images.map((_, index) => (
                   <button
@@ -114,7 +114,7 @@ export const ArtworkCard = ({ artwork, onImageClick, onBuyClick }: ArtworkCardPr
                <button
                   onClick={() => onBuyClick(artwork.title)}
                   disabled={!artwork.available}
-                  className={`text-xs tracking-widest px-4 py-2 border border-black/20 transition-all duration-300 ${
+                  className={`text-xs tracking-widest px-4 py-2 border border-black/20 dark:border-white/10 transition-all duration-300 ${
                      artwork.available
                         ? "hover:text-blue-400 hover:border-blue-400/60 hover:shadow-md hover:shadow-blue-400/20 hover:bg-blue-400/5"
                         : "opacity-50 cursor-not-allowed"

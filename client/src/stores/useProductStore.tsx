@@ -12,6 +12,7 @@ type Merch = {
    year: string;
    images: string[];
    available: boolean;
+   createdAt: string;
 };
 
 type CreateProps = {
