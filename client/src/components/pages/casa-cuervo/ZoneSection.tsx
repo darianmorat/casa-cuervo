@@ -9,33 +9,33 @@ const zones = [
       name: "Patio",
       description:
          "Un espacio al aire libre perfecto para relajarse y conectar con la naturaleza",
-      image: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468920/473368825_18474682114024094_7048284083203549906_n._siycn6.jpg",
+      image: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1761918895/patio_yjobok_gf8nsl.png",
    },
    {
       id: 2,
       name: "Zona de talleres",
       description:
          "Espacio dedicado a la creatividad, el aprendizaje y las actividades manuales",
-      image: "https://picsum.photos/600/400",
+      image: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1761918898/zona-talleres_v7k8rw_sxu3y8.png",
    },
    {
       id: 3,
       name: "Living",
       description: "Área de estar cómoda y acogedora para compartir momentos especiales",
-      image: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468920/473368825_18474682114024094_7048284083203549906_n._siycn6.jpg",
+      image: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1761918895/patio_yjobok_gf8nsl.png", // change this one
    },
    {
       id: 4,
       name: "Comedor",
       description:
          "Mesa compartida donde se crean conversaciones y se comparten alimentos",
-      image: "https://picsum.photos/600/400",
+      image: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1761918893/comedor_uwym8e_d8vumz.png",
    },
    {
       id: 5,
       name: "Cocina",
       description: "El corazón del hogar donde se preparan comidas con amor y cuidado",
-      image: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1757468920/473368825_18474682114024094_7048284083203549906_n._siycn6.jpg",
+      image: "https://res.cloudinary.com/dxlhxvgzc/image/upload/v1761918895/patio_yjobok_gf8nsl.png", // change this one
    },
 ];
 
